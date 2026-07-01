@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>ZindagiAI</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23E8341C'/%3E%3Cstop offset='1' stop-color='%23ff8c6b'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='24' fill='url(%23g)'/%3E%3Cpath d='M30 32h40l-26 36h26' stroke='white' stroke-width='8' stroke-linecap='round' stroke-linejoin='round' fill='none'/%3E%3Ccircle cx='72' cy='28' r='5' fill='white'/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{
+  --red:#E8341C;--red2:#ff6b52;--redbg:#fff0ee;
+  --green:#22C55E;--greenbg:#f0fdf4;
+  --orange:#F59E0B;--orangebg:#fffbeb;
+  --blue:#3B82F6;--bluebg:#eff6ff;
+  --purple:#8B5CF6;--purplebg:#f5f3ff;
+  --bg:#F8F8F8;--white:#FFFFFF;
+  --text:#1A1A1A;--text2:#6B7280;--text3:#9CA3AF;
+  --border:#E5E7EB;--border2:#F3F4F6;
+  --r:16px;--rs:12px;--rx:20px;
+  --shadow:0 2px 12px rgba(0,0,0,0.06);
+  --shadow2:0 4px 24px rgba(0,0,0,0.1);
+}
+html,body{height:100%;overflow:hidden;background:var(--bg);}
+body{font-family:'Inter','Hind Siliguri',sans-serif;color:var(--text);max-width:430px;margin:0 auto;position:relative;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:0;}
+
+/* APP SHELL — uses dynamic viewport height to avoid mobile browser address-bar
+   cutting off the bottom nav. Falls back to JS-set --app-h for older browsers. */
+.app{display:flex;flex-direction:column;height:100vh;height:100dvh;height:var(--app-h,100dvh);background:var(--bg);}
+
+/* PAGES */
+.pages{flex:1;overflow:hidden;position:relative;min-height:0;}
+.page{position:absolute;inset:0;overflow-y:auto;padding:0 0 80px;display:none;background:var(--bg);}
+.page.on{display:block;animation:slideUp .25s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+/* BOTTOM NAV */
+.bnav{
+  height:72px;background:var(--white);border-top:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-around;
+  padding:0 8px 8px;flex-shrink:0;
+  box-shadow:0 -4px 20px rgba(0,0,0,0.06);
+  position:relative;z-index:100;
+}
+.bnav-btn{
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+  border:none;background:transparent;cursor:pointer;padding:8px 12px;
+  border-radius:14px;transition:all .2s;min-width:52px;
+}
+.bnav-btn svg{width:22px;height:22px;color:var(--text3);transition:color .2s;}
+.bnav-btn span{font-size:10px;font-weight:600;color:var(--text3);letter-spacing:0.3px;transition:color .2s;}
+.bnav-btn.on svg{color:var(--red);}
+.bnav-btn.on span{color:var(--red);}
+.bnav-ai{
+  width:52px;height:52px;border-radius:50%;
+  background:linear-gradient(135deg,var(--red),#ff8c6b);
+  border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(232,52,28,0.35);
+  transition:all .2s;margin-top:-20px;
+  position:relative;
+}
+.bnav-ai::before{content:'';position:absolute;inset:-4px;border-radius:50%;border:3px solid rgba(232,52,28,0.15);}
+.bnav-ai svg{width:24px;height:24px;color:white;}
+.bnav-ai.on{box-shadow:0 6px 24px rgba(232,52,28,0.5);}
+
+/* PAGE HEADER */
+.ph{padding:20px 20px 12px;background:var(--white);}
+.ph-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
+.ph h1{font-size:22px;font-weight:800;color:var(--text);}
+.ph p{font-size:13px;color:var(--text2);}
+.ph-actions{display:flex;gap:8px;align-items:center;}
+
+/* ICON BUTTON */
+.icon-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.icon-btn svg{width:16px;height:16px;color:var(--text2);}
+
+/* LANG TOGGLE */
+.lang-sw{display:flex;background:var(--border2);border-radius:20px;padding:3px;gap:2px;}
+.lang-btn{padding:4px 12px;border-radius:16px;border:none;cursor:pointer;font-size:11px;font-weight:700;font-family:inherit;transition:all .2s;background:transparent;color:var(--text2);}
+.lang-btn.on{background:var(--red);color:#fff;}
+
+/* CARDS */
+.card{background:var(--white);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+.card-title{font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.card-title a{font-size:12px;color:var(--red);font-weight:600;cursor:pointer;text-decoration:none;}
+
+/* SECTION */
+.sec{padding:16px 20px 0;}
+.sec-title{font-size:16px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.sec-title a{font-size:12px;color:var(--red);font-weight:600;cursor:pointer;}
+
+/* GREETING */
+.greeting{padding:20px;background:var(--white);}
+.greeting .good{font-size:14px;color:var(--text2);font-weight:500;}
+.greeting .name{font-size:26px;font-weight:800;color:var(--text);margin-top:2px;}
+
+/* MOOD ROW */
+.mood-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;}
+.mood-chip{
+  flex-shrink:0;width:52px;height:52px;border-radius:14px;
+  border:2px solid var(--border);background:var(--white);
+  cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;transition:all .2s;
+}
+.mood-chip svg{width:22px;height:22px;}
+.mood-chip span{font-size:9px;font-weight:600;color:var(--text2);}
+.mood-chip.on{border-color:var(--red);background:var(--redbg);}
+
+/* PROGRESS CARDS */
+.prog-cards{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.prog-card{background:var(--white);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);}
+.prog-card .label{font-size:12px;color:var(--text2);font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.prog-card .label svg{width:14px;height:14px;}
+.prog-card .value{font-size:28px;font-weight:800;color:var(--text);}
+.prog-card .sub{font-size:11px;color:var(--text2);margin-top:2px;}
+
+/* DONUT */
+.donut-wrap{position:relative;width:64px;height:64px;margin:0 auto;}
+.donut-wrap svg{width:64px;height:64px;transform:rotate(-90deg);}
+.donut-bg{fill:none;stroke:var(--border2);stroke-width:6;}
+.donut-fill{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset .6s ease;}
+.donut-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;}
+
+/* AI INSIGHT BOX */
+.ai-box{
+  background:var(--white);border-radius:var(--r);padding:16px;
+  border-left:4px solid var(--red);box-shadow:var(--shadow);
+  display:flex;align-items:flex-start;gap:12px;
+}
+.ai-avatar{width:40px;height:40px;border-radius:50%;background:var(--text);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.ai-avatar svg{width:22px;height:22px;color:white;}
+.ai-box-content .tag{font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.8px;margin-bottom:4px;}
+.ai-box-content p{font-size:13px;color:var(--text);line-height:1.5;font-weight:500;}
+
+/* TASK ITEM */
+.task-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border2);}
+.task-item:last-child{border-bottom:none;padding-bottom:0;}
+.task-check{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;flex-shrink:0;cursor:pointer;transition:all .2s;}
+.task-check.on{background:var(--red);border-color:var(--red);}
+.task-check svg{width:11px;height:11px;color:white;opacity:0;}
+.task-check.on svg{opacity:1;}
+.task-body{flex:1;}
+.task-name{font-size:14px;font-weight:500;color:var(--text);}
+.task-name.done{text-decoration:line-through;color:var(--text3);}
+.task-meta{font-size:11px;color:var(--text2);margin-top:2px;display:flex;align-items:center;gap:6px;}
+.task-meta svg{width:11px;height:11px;}
+.task-cat{font-size:11px;font-weight:600;color:var(--text2);background:var(--border2);padding:2px 8px;border-radius:6px;}
+.pri-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:6px;}
+.pri-h{color:var(--red);background:var(--redbg);}
+.pri-m{color:var(--orange);background:var(--orangebg);}
+.pri-l{color:var(--green);background:var(--greenbg);}
+.task-more{color:var(--text3);cursor:pointer;padding:4px;}
+.task-more svg{width:16px;height:16px;}
+
+/* FAB */
+.fab{
+  position:fixed;bottom:88px;right:20px;
+  width:52px;height:52px;border-radius:50%;
+  background:var(--red);border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(232,52,28,0.4);
+  z-index:50;transition:all .2s;
+}
+.fab svg{width:22px;height:22px;color:white;}
+.fab:hover{transform:scale(1.05);}
+
+/* FILTER TABS */
+.filter-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;}
+.filter-tab{flex-shrink:0;padding:7px 16px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);transition:all .2s;font-family:inherit;}
+.filter-tab.on{background:var(--red);border-color:var(--red);color:white;}
+
+/* SEARCH */
+.search-wrap{position:relative;margin-bottom:12px;}
+.search-wrap svg{position:absolute;left:12px;top:50%;transform:translateY(-50%);width:16px;height:16px;color:var(--text3);}
+.search-inp{width:100%;padding:11px 16px 11px 38px;border-radius:12px;border:1.5px solid var(--border);background:var(--white);font-family:inherit;font-size:14px;color:var(--text);outline:none;}
+.search-inp:focus{border-color:var(--red);}
+.search-inp::placeholder{color:var(--text3);}
+
+/* HABITS */
+.week-strip{display:flex;gap:6px;margin-bottom:16px;}
+.day-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
+.day-label{font-size:10px;font-weight:600;color:var(--text2);}
+.day-dot{width:28px;height:28px;border-radius:50%;background:var(--border2);display:flex;align-items:center;justify-content:center;}
+.day-dot svg{width:14px;height:14px;color:var(--text3);}
+.day-dot.on{background:var(--red);}
+.day-dot.on svg{color:white;}
+
+.habit-item{display:flex;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--border2);}
+.habit-item:last-child{border-bottom:none;}
+.habit-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.habit-ico svg{width:20px;height:20px;}
+.habit-body{flex:1;}
+.habit-name{font-size:14px;font-weight:600;}
+.habit-sub{font-size:11px;color:var(--text2);margin-top:2px;}
+.habit-ring{width:42px;height:42px;position:relative;flex-shrink:0;}
+.habit-ring svg{width:42px;height:42px;transform:rotate(-90deg);}
+.habit-ring-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;}
+
+/* QUOTE BOX */
+.quote-box{background:var(--redbg);border-radius:var(--r);padding:16px;margin-top:4px;}
+.quote-box p{font-size:15px;font-weight:700;color:var(--red);line-height:1.5;}
+.quote-box span{font-size:12px;color:var(--text2);display:block;margin-top:6px;}
+.quote-mark{font-size:48px;color:var(--red);opacity:0.2;line-height:1;margin-top:-8px;}
+
+/* POMO */
+.pomo-page{padding:20px;}
+.pomo-tabs{display:flex;gap:8px;margin-bottom:28px;}
+.pomo-tab{flex:1;padding:10px;border-radius:12px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);font-family:inherit;text-align:center;transition:all .2s;}
+.pomo-tab.on{background:var(--red);border-color:var(--red);color:white;}
+.pomo-circle-wrap{position:relative;width:220px;height:220px;margin:0 auto 28px;}
+.pomo-circle-wrap svg{width:220px;height:220px;transform:rotate(-90deg);}
+.pomo-c-bg{fill:none;stroke:#F3F4F6;stroke-width:10;}
+.pomo-c-fill{fill:none;stroke:var(--red);stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1s linear;stroke-dasharray:628;stroke-dashoffset:0;}
+.pomo-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.pomo-label-top{font-size:12px;color:var(--text2);font-weight:600;margin-bottom:4px;}
+.pomo-time{font-size:52px;font-weight:800;letter-spacing:-2px;color:var(--text);}
+.pomo-label-bot{font-size:13px;color:var(--text2);margin-top:4px;}
+.pomo-btns{display:flex;gap:16px;justify-content:center;align-items:center;margin-bottom:28px;}
+.pomo-btn-reset{width:52px;height:52px;border-radius:50%;border:2px solid var(--border);background:var(--white);cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.pomo-btn-reset svg{width:20px;height:20px;color:var(--text2);}
+.pomo-btn-play{width:68px;height:68px;border-radius:50%;background:var(--red);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(232,52,28,0.4);}
+.pomo-btn-play svg{width:26px;height:26px;color:white;}
+.pomo-btn-pause-icon{width:68px;height:68px;border-radius:50%;background:var(--border2);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.pomo-btn-pause-icon svg{width:26px;height:26px;color:var(--text);}
+.pomo-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+.pomo-stat{background:var(--white);border-radius:var(--rs);padding:14px;text-align:center;box-shadow:var(--shadow);}
+.pomo-stat .val{font-size:18px;font-weight:800;color:var(--text);}
+.pomo-stat .lbl{font-size:10px;color:var(--text2);margin-top:2px;font-weight:600;}
+
+/* MONEY */
+.money-tabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:16px;}
+.money-tab{flex-shrink:0;padding:8px 18px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);font-family:inherit;display:flex;align-items:center;gap:6px;transition:all .2s;}
+.money-tab svg{width:14px;height:14px;}
+.money-tab.on{border-color:var(--red);color:var(--red);background:var(--redbg);}
+.money-hero{background:var(--white);border-radius:var(--r);padding:20px;margin-bottom:12px;box-shadow:var(--shadow);}
+.money-hero .this-month{font-size:12px;color:var(--text2);font-weight:600;margin-bottom:12px;display:flex;justify-content:space-between;}
+.money-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:12px;}
+.money-item .lbl{font-size:11px;color:var(--text2);margin-bottom:4px;}
+.money-item .val{font-size:26px;font-weight:800;}
+.money-item .change{font-size:11px;margin-top:2px;font-weight:600;}
+.money-item .change.up{color:var(--green);}
+.money-item .change.dn{color:var(--red);}
+
+/* CHART */
+.chart-area{height:120px;position:relative;margin:8px 0 20px;}
+.chart-svg{width:100%;height:100%;}
+
+/* BUDGET BAR */
+.budget-bar{background:var(--border2);border-radius:4px;height:8px;overflow:hidden;margin:8px 0;}
+.budget-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--red),#ff8c6b);transition:width .6s ease;}
+
+/* TX ITEM */
+.tx-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2);}
+.tx-item:last-child{border-bottom:none;}
+.tx-ico{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.tx-ico svg{width:18px;height:18px;}
+.tx-body{flex:1;}
+.tx-name{font-size:14px;font-weight:500;}
+.tx-date{font-size:11px;color:var(--text2);margin-top:2px;}
+.tx-amt{font-size:15px;font-weight:700;}
+.tx-amt.in{color:var(--green);}
+.tx-amt.ex{color:var(--red);}
+
+/* AI CHAT */
+.chat-wrap{display:flex;flex-direction:column;height:calc(100vh - 72px);}
+.chat-header{padding:16px 20px;background:var(--white);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.chat-back{width:32px;height:32px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+.chat-back svg{width:18px;height:18px;color:var(--text);}
+.ai-info{flex:1;}
+.ai-info h2{font-size:16px;font-weight:700;}
+.ai-online{font-size:12px;color:var(--green);display:flex;align-items:center;gap:4px;margin-top:1px;}
+.ai-online::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.ai-bot-icon{width:44px;height:44px;border-radius:50%;background:var(--text);display:flex;align-items:center;justify-content:center;}
+.ai-bot-icon svg{width:24px;height:24px;color:white;}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:12px;}
+.msg{max-width:80%;animation:msgIn .25s ease;}
+@keyframes msgIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+.msg.ai{align-self:flex-start;}
+.msg.user{align-self:flex-end;}
+.msg-bbl{padding:12px 16px;border-radius:18px;font-size:14px;line-height:1.6;}
+.msg.ai .msg-bbl{background:var(--white);border-bottom-left-radius:4px;border:1px solid var(--border);color:var(--text);}
+.msg.user .msg-bbl{background:var(--red);border-bottom-right-radius:4px;color:white;}
+.typing-bbl{display:flex;gap:4px;padding:6px 4px;}
+.typing-bbl span{width:7px;height:7px;border-radius:50%;background:var(--text3);animation:bounce 1.2s infinite;}
+.typing-bbl span:nth-child(2){animation-delay:.2s;}
+.typing-bbl span:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0);}30%{transform:translateY(-5px);}}
+.save-to-notes{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border:1.5px solid var(--border);border-radius:8px;background:var(--white);cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);font-family:inherit;margin-top:8px;}
+.save-to-notes svg{width:13px;height:13px;}
+.chat-bottom{padding:12px 20px;background:var(--white);border-top:1px solid var(--border);flex-shrink:0;}
+.chat-inp-row{display:flex;gap:10px;align-items:center;background:var(--border2);border-radius:24px;padding:6px 6px 6px 16px;}
+.chat-inp{flex:1;border:none;background:transparent;font-family:inherit;font-size:14px;color:var(--text);outline:none;}
+.chat-inp::placeholder{color:var(--text3);}
+.voice-btn2{width:38px;height:38px;border-radius:50%;background:var(--red);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.voice-btn2 svg{width:16px;height:16px;color:white;}
+.voice-btn2.rec{animation:puls 1s infinite;}
+@keyframes puls{0%,100%{box-shadow:0 0 0 0 rgba(232,52,28,.4);}50%{box-shadow:0 0 0 8px rgba(232,52,28,0);}}
+.send-btn2{width:38px;height:38px;border-radius:50%;background:var(--text);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.send-btn2 svg{width:16px;height:16px;color:white;}
+.chips{display:flex;gap:8px;overflow-x:auto;padding:10px 0 4px;}
+.chip{flex-shrink:0;padding:7px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--white);cursor:pointer;font-size:12px;font-weight:600;color:var(--text2);font-family:inherit;white-space:nowrap;transition:all .2s;}
+.chip:hover{border-color:var(--red);color:var(--red);}
+
+/* NOTES */
+.note-card{background:var(--white);border-radius:var(--r);padding:16px;margin-bottom:10px;box-shadow:var(--shadow);cursor:pointer;transition:all .2s;}
+.note-card:hover{box-shadow:var(--shadow2);}
+.note-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
+.note-title{font-size:15px;font-weight:700;color:var(--text);}
+.note-prev{font-size:13px;color:var(--text2);line-height:1.5;}
+.note-bot{display:flex;align-items:center;justify-content:space-between;margin-top:10px;}
+.note-date{font-size:11px;color:var(--text3);}
+.note-tag{font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px;}
+.note-tag.ai{background:var(--redbg);color:var(--red);}
+.note-tag.manual{background:var(--border2);color:var(--text2);}
+.bmark{color:var(--text3);cursor:pointer;}
+.bmark svg{width:16px;height:16px;}
+
+/* SHARED */
+.shared-group{background:var(--white);border-radius:var(--r);padding:16px;margin-bottom:12px;box-shadow:var(--shadow);}
+.sg-top{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.sg-ico{width:44px;height:44px;border-radius:12px;background:var(--redbg);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sg-ico svg{width:22px;height:22px;color:var(--red);}
+.sg-info h3{font-size:15px;font-weight:700;}
+.sg-info p{font-size:12px;color:var(--text2);margin-top:1px;}
+.invite-btn{width:100%;padding:12px;border-radius:12px;background:var(--red);border:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:700;color:white;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:12px;}
+.invite-btn svg{width:16px;height:16px;}
+.activity-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border2);}
+.activity-item:last-child{border-bottom:none;}
+.act-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;flex-shrink:0;}
+.act-body{flex:1;}
+.act-name{font-size:13px;font-weight:600;}
+.act-desc{font-size:11px;color:var(--text2);}
+.act-time{font-size:10px;color:var(--text3);}
+.sh-task{display:flex;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid var(--border2);}
+.sh-task:last-child{border-bottom:none;}
+.sh-chk{width:20px;height:20px;border-radius:6px;border:2px solid var(--border);display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:all .2s;}
+.sh-chk svg{width:11px;height:11px;color:white;opacity:0;}
+.sh-chk.on{background:var(--green);border-color:var(--green);}
+.sh-chk.on svg{opacity:1;}
+.sh-task-name{flex:1;font-size:14px;font-weight:500;}
+.sh-task-name.done{text-decoration:line-through;color:var(--text3);}
+.sh-by{font-size:11px;color:var(--text2);}
+
+/* MODAL / SHEET */
+.sheet-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:200;display:none;align-items:flex-end;}
+.sheet-overlay.on{display:flex;animation:fadein .2s ease;}
+@keyframes fadein{from{opacity:0;}to{opacity:1;}}
+.sheet{background:var(--white);border-radius:24px 24px 0 0;padding:24px 20px 40px;width:100%;max-height:80vh;overflow-y:auto;animation:slideup .25s ease;}
+@keyframes slideup{from{transform:translateY(100%);}to{transform:translateY(0);}}
+.sheet-handle{width:40px;height:4px;background:var(--border);border-radius:2px;margin:0 auto 20px;}
+.sheet h2{font-size:18px;font-weight:800;margin-bottom:20px;}
+.inp{width:100%;padding:13px 16px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg);font-family:inherit;font-size:14px;color:var(--text);outline:none;transition:border-color .2s;}
+.inp:focus{border-color:var(--red);}
+.inp::placeholder{color:var(--text3);}
+textarea.inp{resize:none;min-height:90px;}
+select.inp{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%239CA3AF' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14L2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer;}
+.frow{display:flex;flex-direction:column;gap:10px;}
+.f2{display:flex;gap:10px;}
+.f2>*{flex:1;}
+.btn-full{width:100%;padding:14px;border-radius:14px;background:var(--red);border:none;cursor:pointer;font-family:inherit;font-size:15px;font-weight:700;color:white;margin-top:4px;}
+.lbl{font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px;}
+
+/* TOAST */
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:var(--text);color:white;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:300;display:none;white-space:nowrap;box-shadow:var(--shadow2);}
+.toast.on{display:block;animation:toastIn .3s ease;}
+@keyframes toastIn{from{opacity:0;transform:translateX(-50%) translateY(10px);}to{opacity:1;transform:translateX(-50%) translateY(0);}}
+
+/* SAVE INDICATOR */
+.save-ind{padding:10px 20px;display:flex;align-items:center;gap:6px;font-size:11px;color:var(--text2);}
+.save-ind svg{width:13px;height:13px;color:var(--green);}
+
+/* STATUS BAR PLACEHOLDER */
+.status-bar{height:env(safe-area-inset-top,0px);}
+
+/* ===== TOP APP BAR ===== */
+.topbar{
+  flex-shrink:0;background:var(--white);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:max(10px,env(safe-area-inset-top,0px)) 16px 10px;
+  position:relative;z-index:100;
+}
+.topbar-brand{display:flex;align-items:center;gap:9px;cursor:pointer;background:none;border:none;padding:0;font-family:inherit;}
+.app-logo{width:32px;height:32px;border-radius:9px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--red),#ff8c6b);box-shadow:0 2px 8px rgba(232,52,28,0.3);}
+.app-logo svg{width:18px;height:18px;}
+.topbar-name{font-size:17px;font-weight:800;color:var(--text);letter-spacing:-0.2px;}
+.topbar-name b{color:var(--red);font-weight:800;}
+.topbar-actions{display:flex;align-items:center;gap:8px;}
+.topbar-avatar{
+  width:36px;height:36px;border-radius:50%;border:none;cursor:pointer;flex-shrink:0;
+  background:var(--text);display:flex;align-items:center;justify-content:center;
+  color:#fff;font-size:14px;font-weight:700;font-family:inherit;overflow:hidden;
+}
+.topbar-avatar svg{width:18px;height:18px;}
+
+/* ===== PROFILE PAGE ===== */
+.profile-hero{background:var(--white);padding:28px 20px 22px;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.profile-avatar-lg{
+  width:84px;height:84px;border-radius:50%;background:linear-gradient(135deg,var(--red),#ff8c6b);
+  display:flex;align-items:center;justify-content:center;color:#fff;font-size:32px;font-weight:800;
+  box-shadow:0 6px 20px rgba(232,52,28,0.3);margin-bottom:12px;
+}
+.profile-hero .pname{font-size:18px;font-weight:800;color:var(--text);}
+.profile-hero .pmeta{font-size:12px;color:var(--text2);margin-top:2px;}
+</style>
+<script>
+  // Set real viewport height immediately (before paint) so mobile browsers
+  // (Chrome/Safari with collapsing address bar) never clip the bottom nav.
+  document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px');
+</script>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== GLOBAL TOP BAR ===== -->
+  <header class="topbar" id="global-topbar">
+    <button class="topbar-brand" onclick="showPage('home')">
+      <div class="app-logo">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 4h6l-4 8h6"/>
+          <circle cx="17" cy="5" r="1.5" fill="white" stroke="none"/>
+        </svg>
+      </div>
+      <span class="topbar-name">Zindagi<b>AI</b></span>
+    </button>
+    <div class="topbar-actions">
+      <div class="lang-sw">
+        <button class="lang-btn on" onclick="setLang('en')" id="btn-en">EN</button>
+        <button class="lang-btn" onclick="setLang('bn')" id="btn-bn">বাং</button>
+      </div>
+      <button class="topbar-avatar" id="topbar-avatar-btn" onclick="showPage('profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="pages">
+
+    <!-- ===== HOME ===== -->
+    <div class="page on" id="page-home">
+      <!-- Greeting -->
+      <div class="greeting">
+        <div style="margin-bottom:16px;">
+          <div class="good" id="lbl-good-time">Good Morning,</div>
+          <div class="name" id="home-user-name">ZindagiAI 👋</div>
+        </div>
+        <!-- Mood -->
+        <div style="font-size:13px;font-weight:600;color:var(--text2);margin-bottom:10px;" id="lbl-how-feeling">How are you feeling?</div>
+        <div class="mood-row" id="mood-row"></div>
+      </div>
+
+      <!-- Progress Cards -->
+      <div style="padding:16px 20px 0;">
+        <div class="prog-cards">
+          <div class="prog-card" onclick="showPage('pomo')" style="cursor:pointer;">
+            <div class="label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span id="lbl-daily-prog">Daily Progress</span>
+            </div>
+            <div class="donut-wrap" style="margin:8px 0;">
+              <svg viewBox="0 0 64 64"><circle class="donut-bg" cx="32" cy="32" r="26"/><circle class="donut-fill" cx="32" cy="32" r="26" id="prog-donut" stroke="var(--red)" stroke-dasharray="163" stroke-dashoffset="163"/></svg>
+              <div class="donut-center" id="prog-pct">0%</div>
+            </div>
+            <div class="sub" id="prog-sub">Keep going!</div>
+          </div>
+          <div class="prog-card" onclick="showPage('habits')" style="cursor:pointer;">
+            <div class="label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+              <span id="lbl-habit-streak">Habit Streak</span>
+            </div>
+            <div class="value" id="streak-val">7 <span style="font-size:14px;color:var(--text2);">Days</span></div>
+            <div class="sub" id="streak-fires" style="font-size:18px;letter-spacing:2px;margin-top:6px;">🔥🔥🔥🔥🔥🔥🔥</div>
+          </div>
+        </div>
+
+        <!-- AI Insight -->
+        <div class="ai-box" style="margin-bottom:12px;">
+          <div class="ai-avatar">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+          </div>
+          <div class="ai-box-content">
+            <div class="tag" id="lbl-ai-insight">✦ AI INSIGHT</div>
+            <p id="ai-insight-text">You are most productive between 9 – 11 AM</p>
+          </div>
+        </div>
+
+        <!-- Today Tasks -->
+        <div class="sec-title" style="margin-bottom:8px;">
+          <span id="lbl-today-tasks">Today's Tasks</span>
+          <a onclick="showPage('tasks')" id="lbl-view-all">View all</a>
+        </div>
+        <div class="card" style="margin-bottom:8px;">
+          <div id="home-tasks-list"></div>
+          <button onclick="openSheet('task')" style="width:100%;padding:10px;border-radius:10px;border:1.5px dashed var(--border);background:transparent;cursor:pointer;font-size:13px;font-weight:600;color:var(--text2);font-family:inherit;margin-top:10px;" id="lbl-add-task-quick">+ Add task</button>
+        </div>
+
+        <!-- Quick Access Row -->
+        <div class="sec-title" style="margin-bottom:8px;">
+          <span id="lbl-quick-access">Quick Access</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+          <button onclick="showPage('habits')" style="background:white;border:1px solid var(--border);border-radius:14px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:inherit;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20A10 10 0 0 0 12 2z"/><path d="M12 6v6l4 2"/></svg>
+            <span style="font-size:11px;font-weight:600;color:var(--text);" id="lbl-qa-habits">Habits</span>
+          </button>
+          <button onclick="showPage('pomo')" style="background:white;border:1px solid var(--border);border-radius:14px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:inherit;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15 15"/></svg>
+            <span style="font-size:11px;font-weight:600;color:var(--text);" id="lbl-qa-pomo">Focus Timer</span>
+          </button>
+          <button onclick="showPage('notes')" style="background:white;border:1px solid var(--border);border-radius:14px;padding:14px 8px;display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;font-family:inherit;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            <span style="font-size:11px;font-weight:600;color:var(--text);" id="lbl-qa-notes">Notes</span>
+          </button>
+        </div>
+
+        <!-- Save indicator -->
+        <div class="save-ind">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+          <span id="lbl-save-ind">Data saved locally · No data loss after refresh</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== TASKS ===== -->
+    <div class="page" id="page-tasks">
+      <div class="ph">
+        <div class="ph-top">
+          <div><h1 id="lbl-tasks-title">Tasks</h1><p id="lbl-tasks-sub">Organize and get things done</p></div>
+          <div class="ph-actions">
+            <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div>
+          </div>
+        </div>
+      </div>
+      <div style="padding:12px 20px 0;">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-inp" id="task-search" placeholder="Search tasks...">
+        </div>
+        <div class="filter-tabs" style="margin-bottom:12px;">
+          <button class="filter-tab on" onclick="filterTasks('all',this)" id="ft-all">All</button>
+          <button class="filter-tab" onclick="filterTasks('work',this)">Work</button>
+          <button class="filter-tab" onclick="filterTasks('personal',this)">Personal</button>
+          <button class="filter-tab" onclick="filterTasks('study',this)">Study</button>
+          <button class="filter-tab" onclick="filterTasks('health',this)">Health</button>
+        </div>
+        <div class="filter-tabs" style="margin-bottom:16px;">
+          <button class="filter-tab on" onclick="filterPri('all',this)" style="background:var(--text);border-color:var(--text);color:white;" id="fp-all">All</button>
+          <button class="filter-tab" onclick="filterPri('h',this)" style="">
+            <span style="color:var(--red);font-weight:700;">● High</span>
+          </button>
+          <button class="filter-tab" onclick="filterPri('m',this)">
+            <span style="color:var(--orange);font-weight:700;">● Medium</span>
+          </button>
+          <button class="filter-tab" onclick="filterPri('l',this)">
+            <span style="color:var(--green);font-weight:700;">● Low</span>
+          </button>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;" id="lbl-today-sec">Today</div>
+        <div class="card" style="padding:4px 16px;">
+          <div id="tasks-list"></div>
+        </div>
+      </div>
+      <button class="fab" onclick="openSheet('task')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <!-- ===== AI ===== -->
+    <div class="page" id="page-ai" style="padding:0;">
+      <div class="chat-wrap">
+        <div class="chat-header">
+          <div class="ai-bot-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/><circle cx="12" cy="16" r="1" fill="currentColor"/></svg>
+          </div>
+          <div class="ai-info">
+            <h2 id="lbl-ai-name">AI Assistant</h2>
+            <div class="ai-online" id="lbl-ai-online">Online</div>
+          </div>
+          <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
+        </div>
+        <div class="chat-msgs" id="chat-msgs"></div>
+        <div class="chat-bottom">
+          <div class="chat-inp-row">
+            <button class="voice-btn2" id="voice-btn" onclick="toggleVoice()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+            </button>
+            <input class="chat-inp" id="chat-inp" onkeydown="if(event.key==='Enter')sendChat()" placeholder="Type your message...">
+            <button class="send-btn2" onclick="sendChat()">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+            </button>
+          </div>
+          <div class="chips" id="quick-chips"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== HABITS ===== -->
+    <div class="page" id="page-habits">
+      <div class="ph">
+        <div class="ph-top">
+          <div><h1 id="lbl-habits-title">Habits</h1><p id="lbl-habits-sub">Build better routines</p></div>
+          <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
+        </div>
+      </div>
+      <div style="padding:12px 20px 0;">
+        <div class="card">
+          <div class="card-title" id="lbl-weekly-streak">Weekly Streak</div>
+          <div class="week-strip" id="week-strip"></div>
+        </div>
+        <div class="card" style="padding:4px 16px;">
+          <div id="habits-list"></div>
+        </div>
+        <div class="quote-box">
+          <p id="quote-text">Discipline today, freedom tomorrow.</p>
+          <span>— Unknown</span>
+          <div class="quote-mark">"</div>
+        </div>
+      </div>
+      <button class="fab" onclick="openSheet('habit')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <!-- ===== MONEY ===== -->
+    <div class="page" id="page-money">
+      <div class="ph">
+        <div class="ph-top">
+          <div><h1 id="lbl-money-title">Money Tracker</h1><p id="lbl-money-sub">Track, analyze, grow</p></div>
+          <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg></div>
+        </div>
+        <div class="money-tabs">
+          <button class="money-tab on" onclick="setProfession('job',this)" id="mt-job">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Employee
+          </button>
+          <button class="money-tab" onclick="setProfession('biz',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+            Business
+          </button>
+          <button class="money-tab" onclick="setProfession('free',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Freelancer
+          </button>
+          <button class="money-tab" onclick="setProfession('stu',this)">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+            Student
+          </button>
+        </div>
+      </div>
+      <div style="padding:12px 20px 0;">
+        <div class="money-hero">
+          <div class="this-month"><span id="lbl-this-month">This Month</span><span id="money-month-label">Jun 2026</span></div>
+          <div class="money-row">
+            <div class="money-item">
+              <div class="lbl" id="lbl-income">Income</div>
+              <div class="val" style="color:var(--text);" id="tot-income">৳ 0</div>
+              <div class="change up" id="income-change">+0%</div>
+            </div>
+            <div class="money-item">
+              <div class="lbl" id="lbl-expense">Expense</div>
+              <div class="val" style="color:var(--red);" id="tot-expense">৳ 0</div>
+              <div class="change dn" id="expense-change">+0%</div>
+            </div>
+          </div>
+          <!-- Chart -->
+          <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;">
+            <span id="lbl-overview">Overview</span>
+            <div style="display:flex;gap:12px;font-size:11px;">
+              <span style="color:var(--green);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--green);display:inline-block;"></span>Income</span>
+              <span style="color:var(--red);display:flex;align-items:center;gap:4px;"><span style="width:8px;height:8px;border-radius:50%;background:var(--red);display:inline-block;"></span>Expense</span>
+            </div>
+          </div>
+          <div class="chart-area" id="money-chart"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span id="lbl-budget-prog">Budget Progress</span>
+            <span id="budget-pct" style="color:var(--red);font-weight:800;">0%</span>
+          </div>
+          <div class="budget-bar"><div class="budget-fill" id="budget-fill" style="width:0%;"></div></div>
+          <div style="font-size:12px;color:var(--text2);margin-top:8px;" id="budget-label">৳ 0 / ৳ 0</div>
+        </div>
+
+        <div class="card" style="padding:4px 16px;">
+          <div class="card-title" style="padding:12px 0 4px;">
+            <span id="lbl-recent-tx">Recent Transactions</span>
+            <a onclick="openSheet('money')" id="lbl-add-tx">+ Add</a>
+          </div>
+          <div id="money-list"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FOCUS (POMO) ===== -->
+    <div class="page" id="page-pomo">
+      <div class="ph">
+        <div class="ph-top">
+          <div><h1 id="lbl-pomo-title">Focus Timer</h1><p id="lbl-pomo-sub">Stay focused, achieve more</p></div>
+        </div>
+      </div>
+      <div class="pomo-page">
+        <div class="pomo-tabs" id="pomo-tabs">
+          <button class="pomo-tab on" onclick="setPomoMode(25,'Focus',this)" id="pt-focus">25 min Focus</button>
+          <button class="pomo-tab" onclick="setPomoMode(5,'Short Break',this)">5 min Short Break</button>
+          <button class="pomo-tab" onclick="setPomoMode(15,'Long Break',this)">15 min Long Break</button>
+        </div>
+        <div class="pomo-circle-wrap">
+          <svg viewBox="0 0 220 220">
+            <circle class="pomo-c-bg" cx="110" cy="110" r="100"/>
+            <circle class="pomo-c-fill" cx="110" cy="110" r="100" id="pomo-ring"/>
+          </svg>
+          <div class="pomo-center">
+            <div class="pomo-label-top" id="lbl-focus-time">Focus Time</div>
+            <div class="pomo-time" id="pomo-disp">25:00</div>
+            <div class="pomo-label-bot" id="pomo-bot-lbl">Let's get started!</div>
+          </div>
+        </div>
+        <div class="pomo-btns">
+          <button class="pomo-btn-reset" onclick="resetPomo()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.1"/></svg>
+          </button>
+          <button class="pomo-btn-play" id="pomo-play-btn" onclick="togglePomo()">
+            <svg viewBox="0 0 24 24" fill="currentColor" id="pomo-play-icon"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </button>
+          <button class="pomo-btn-pause-icon" onclick="resetPomo()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.1"/></svg>
+          </button>
+        </div>
+        <div style="font-size:12px;font-weight:700;color:var(--text2);margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+          <span id="lbl-today-sess">Today's Sessions</span>
+          <a style="color:var(--red);cursor:pointer;" id="lbl-view-all-sess">View all</a>
+        </div>
+        <div class="pomo-stats">
+          <div class="pomo-stat"><div class="val" id="pomo-cnt">0</div><div class="lbl" id="lbl-sessions">Sessions</div></div>
+          <div class="pomo-stat"><div class="val" id="pomo-focus-time">0h 0m</div><div class="lbl" id="lbl-focus-time-lbl">Focus Time</div></div>
+          <div class="pomo-stat"><div class="val" id="pomo-break-time">0m</div><div class="lbl" id="lbl-break-time">Break Time</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== NOTES ===== -->
+    <div class="page" id="page-notes">
+      <div class="ph">
+        <div class="ph-top">
+          <div><h1 id="lbl-notes-title">Notes</h1><p id="lbl-notes-sub">All your notes in one place</p></div>
+          <div class="icon-btn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg></div>
+        </div>
+      </div>
+      <div style="padding:12px 20px 0;">
+        <div class="search-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-inp" placeholder="Search notes..." id="note-search">
+        </div>
+        <div class="filter-tabs" style="margin-bottom:16px;">
+          <button class="filter-tab on" onclick="filterNotes('all',this)">All</button>
+          <button class="filter-tab" onclick="filterNotes('ideas',this)">Ideas</button>
+          <button class="filter-tab" onclick="filterNotes('work',this)">Work</button>
+          <button class="filter-tab" onclick="filterNotes('personal',this)">Personal</button>
+          <button class="filter-tab" onclick="filterNotes('ai',this)">AI</button>
+        </div>
+        <div id="notes-list"></div>
+      </div>
+      <button class="fab" onclick="openSheet('note')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </button>
+    </div>
+
+    <!-- ===== PROFILE ===== -->
+    <div class="page" id="page-profile">
+      <!-- Hero -->
+      <div class="profile-hero">
+        <div class="profile-avatar-lg" id="profile-avatar-lg">?</div>
+        <div class="pname" id="profile-display-name">Your Name</div>
+        <div class="pmeta" id="profile-display-meta">Set up your profile</div>
+      </div>
+
+      <div style="padding:16px 20px 0;">
+        <!-- Edit Form Card -->
+        <div class="card" style="padding:20px;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            Edit Profile
+          </div>
+          <div class="frow">
+            <div>
+              <div class="lbl">Full Name</div>
+              <input class="inp" id="pf-name" placeholder="e.g. Raisa Ahmed">
+            </div>
+            <div>
+              <div class="lbl">Username / Nickname</div>
+              <input class="inp" id="pf-nick" placeholder="e.g. Raisa">
+            </div>
+            <div>
+              <div class="lbl">Email</div>
+              <input class="inp" type="email" id="pf-email" placeholder="you@email.com">
+            </div>
+            <div>
+              <div class="lbl">Phone</div>
+              <input class="inp" type="tel" id="pf-phone" placeholder="+880 1X...">
+            </div>
+            <div>
+              <div class="lbl">Profession</div>
+              <select class="inp" id="pf-profession">
+                <option value="job">Employee / Job</option>
+                <option value="biz">Business Owner</option>
+                <option value="free">Freelancer</option>
+                <option value="stu">Student</option>
+              </select>
+            </div>
+            <div>
+              <div class="lbl">City</div>
+              <input class="inp" id="pf-city" placeholder="e.g. Dhaka">
+            </div>
+            <div>
+              <div class="lbl">Bio / About</div>
+              <textarea class="inp" id="pf-bio" rows="3" placeholder="A short bio..."></textarea>
+            </div>
+          </div>
+          <button class="btn-full" style="margin-top:18px;" onclick="saveProfile()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" style="vertical-align:-3px;margin-right:6px;"><polyline points="20 6 9 17 4 12"/></svg>
+            Save Profile
+          </button>
+        </div>
+
+        <!-- App Preferences -->
+        <div class="card" style="padding:20px;margin-top:12px;">
+          <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:6px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--red)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/></svg>
+            App Info
+          </div>
+          <div style="display:flex;flex-direction:column;gap:12px;">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+              <span style="font-size:13px;color:var(--text2);">App Version</span>
+              <span style="font-size:13px;font-weight:600;color:var(--text);">v1.0.0</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--border);">
+              <span style="font-size:13px;color:var(--text2);">Data Storage</span>
+              <span style="font-size:13px;font-weight:600;color:var(--green);">Local · Safe</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;">
+              <span style="font-size:13px;color:var(--text2);">Made with</span>
+              <span style="font-size:13px;font-weight:600;color:var(--red);">❤️ ZindagiAI</span>
+            </div>
+          </div>
+        </div>
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+
+    <!-- ===== SHARED ===== -->
+    <div class="page" id="page-shared">
+      <div class="ph">
+        <div class="ph-top">
+          <div><h1 id="lbl-shared-title">Shared Space</h1><p id="lbl-shared-sub">Connect & collaborate with others</p></div>
+        </div>
+      </div>
+      <div style="padding:0 20px 0;" id="shared-page-body">
+
+        <!-- ① NO ROOM STATE (shown when not connected) -->
+        <div id="shared-no-room">
+
+          <!-- My Room Code — always visible so others can find you -->
+          <div style="background:linear-gradient(135deg,var(--red),#ff7c5c);border-radius:16px;padding:20px;margin-bottom:14px;color:white;">
+            <div style="font-size:11px;font-weight:700;opacity:.8;letter-spacing:.5px;margin-bottom:4px;">👤 YOUR ROOM CODE</div>
+            <div style="font-size:30px;font-weight:800;letter-spacing:6px;margin-bottom:6px;" id="my-room-code-disp">------</div>
+            <div style="font-size:12px;opacity:.8;margin-bottom:14px;">Share this code with family or team so they can join your room</div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="copyMyCode()" style="flex:1;padding:10px;background:rgba(255,255,255,0.25);border:none;border-radius:10px;color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">
+                📋 Copy Code
+              </button>
+              <button onclick="shareMyCode()" style="flex:1;padding:10px;background:rgba(255,255,255,0.25);border:none;border-radius:10px;color:white;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;">
+                🔗 Share Link
+              </button>
+            </div>
+          </div>
+
+          <!-- Join someone's Room -->
+          <div class="card" style="padding:20px;margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:4px;">🔗 Join Someone's Room</div>
+            <div style="font-size:12px;color:var(--text2);margin-bottom:14px;">Enter the room code shared by a family member or teammate</div>
+            <div style="display:flex;gap:8px;">
+              <input class="inp" id="join-code-inp" placeholder="Enter Room Code" style="flex:1;text-transform:uppercase;letter-spacing:2px;font-size:16px;font-weight:700;text-align:center;">
+              <button onclick="joinRoom(document.getElementById('join-code-inp').value)" style="padding:13px 18px;background:var(--red);color:white;border:none;border-radius:12px;font-weight:700;font-size:13px;cursor:pointer;font-family:inherit;white-space:nowrap;">Join →</button>
+            </div>
+          </div>
+
+          <!-- What is Shared Space? — onboarding for new users -->
+          <div class="card" style="padding:18px;margin-bottom:14px;">
+            <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:12px;">💡 How Shared Space works</div>
+            <div style="display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:8px;background:#fff0ee;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">1️⃣</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);">Share your code</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Send your Room Code to family or team members</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:8px;background:#fff0ee;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">2️⃣</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);">They join your room</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Anyone with your code can join and see shared tasks</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start;">
+                <div style="width:28px;height:28px;border-radius:8px;background:#fff0ee;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:14px;">3️⃣</div>
+                <div><div style="font-size:13px;font-weight:600;color:var(--text);">Collaborate in real-time</div><div style="font-size:12px;color:var(--text2);margin-top:2px;">Add tasks, check them off — everyone sees updates instantly</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ② CONNECTED STATE (shown when in a room) -->
+        <div id="shared-in-room" style="display:none;">
+
+          <!-- Connected banner -->
+          <div id="room-connected-banner" style="display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:#f0fdf4;border-radius:14px;border:1.5px solid #bbf7d0;margin-bottom:14px;">
+            <div>
+              <div style="font-size:10px;font-weight:700;color:#22C55E;letter-spacing:.5px;">● CONNECTED</div>
+              <div style="font-size:15px;font-weight:800;color:var(--text);margin-top:2px;" id="connected-room-code">Room: ------</div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button onclick="copyMyCode()" style="padding:8px 14px;background:white;border:1.5px solid #bbf7d0;border-radius:10px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;color:var(--text);">📋 Share</button>
+              <button onclick="leaveRoom()" style="padding:8px 14px;background:#fff0ee;border:1.5px solid #fca5a5;border-radius:10px;font-size:12px;font-weight:700;color:var(--red);cursor:pointer;font-family:inherit;">Leave</button>
+            </div>
+          </div>
+
+          <!-- Shared Task List -->
+          <div class="card" style="padding:4px 16px;margin-bottom:14px;">
+            <div class="card-title" style="padding:12px 0 4px;">
+              <span style="font-weight:700;">📋 Shared Tasks</span>
+              <button onclick="openSheet('shared')" style="background:var(--red);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">+ Add</button>
+            </div>
+            <div id="shared-list"></div>
+          </div>
+
+          <!-- Activity Feed -->
+          <div class="card" style="margin-bottom:14px;">
+            <div class="card-title">
+              <span style="font-weight:700;">⚡ Recent Activity</span>
+            </div>
+            <div id="activity-list">
+              <div style="text-align:center;padding:16px;color:var(--text3);font-size:13px;">No activity yet</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ③ CONTACTS — always visible -->
+        <div class="card" style="margin-bottom:14px;">
+          <div class="card-title">
+            <span style="font-weight:700;">👥 My Contacts</span>
+            <button onclick="openSheet('contact')" style="background:var(--red);color:white;border:none;border-radius:8px;padding:6px 12px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">+ Add</button>
+          </div>
+          <div style="font-size:12px;color:var(--text2);padding:0 0 10px;">Save someone's room code here to quickly send them tasks</div>
+          <div id="contacts-list"></div>
+        </div>
+
+        <div style="height:20px;"></div>
+      </div>
+    </div>
+
+  </div><!-- end pages -->
+
+  <!-- BOTTOM NAV -->
+  <nav class="bnav">
+    <button class="bnav-btn on" onclick="showPage('home')" id="nb-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      <span id="nl-home">Home</span>
+    </button>
+    <button class="bnav-btn" onclick="showPage('tasks')" id="nb-tasks">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      <span id="nl-tasks">Tasks</span>
+    </button>
+    <button class="bnav-ai on" onclick="showPage('ai')" id="nb-ai">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.93 4.93l2.12 2.12M16.95 16.95l2.12 2.12M4.93 19.07l2.12-2.12M16.95 7.05l2.12-2.12"/></svg>
+    </button>
+    <button class="bnav-btn" onclick="showPage('money')" id="nb-money">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      <span id="nl-money">Money</span>
+    </button>
+    <button class="bnav-btn" onclick="showPage('shared')" id="nb-shared">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span id="nl-profile">Shared</span>
+    </button>
+  </nav>
+</div>
+
+<!-- SHEETS -->
+<div class="sheet-overlay" id="sheet-overlay" onclick="closeSheet(event)">
+  <div class="sheet" id="sheet-content"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+
+// ===== STATE =====
+const S = {
+  lang: localStorage.getItem('z_lang') || 'en',
+  tasks: JSON.parse(localStorage.getItem('z_tasks') || '[]'),
+  habits: JSON.parse(localStorage.getItem('z_habits') || '[]'),
+  notes: JSON.parse(localStorage.getItem('z_notes') || '[]'),
+  money: JSON.parse(localStorage.getItem('z_money') || '[]'),
+  shared: JSON.parse(localStorage.getItem('z_shared') || '[]'),
+  chat: JSON.parse(localStorage.getItem('z_chat') || '[]'),
+  pomo: parseInt(localStorage.getItem('z_pomo') || '0'),
+  mood: localStorage.getItem('z_mood') || 'happy',
+  profession: localStorage.getItem('z_prof') || 'job',
+};
+function save(k, d) { localStorage.setItem('z_' + k, JSON.stringify(d)); }
+
+// ===== TRANSLATIONS =====
+const TR = {
+  en: {
+    good_morning: 'Good Morning,', good_afternoon: 'Good Afternoon,', good_evening: 'Good Evening,',
+    how_feeling: 'How are you feeling?', daily_prog: 'Daily Progress', habit_streak: 'Habit Streak',
+    ai_insight: '✦ AI INSIGHT', today_tasks: "Today's Tasks", view_all: 'View all',
+    add_task_quick: '+ Add task', save_ind: 'Data saved locally · No data loss after refresh',
+    tasks_title: 'Tasks', tasks_sub: 'Organize and get things done', today_sec: 'Today',
+    ai_name: 'AI Assistant', ai_online: 'Online',
+    habits_title: 'Habits', habits_sub: 'Build better routines', weekly_streak: 'Weekly Streak',
+    money_title: 'Money Tracker', money_sub: 'Track, analyze, grow', this_month: 'This Month',
+    income: 'Income', expense: 'Expense', overview: 'Overview', budget_prog: 'Budget Progress',
+    recent_tx: 'Recent Transactions', add_tx: '+ Add',
+    pomo_title: 'Focus Timer', pomo_sub: 'Stay focused, achieve more',
+    today_sess: "Today's Sessions", view_all_sess: 'View all',
+    sessions: 'Sessions', focus_time_lbl: 'Focus Time', break_time: 'Break Time', focus_time: 'Focus Time',
+    notes_title: 'Notes', notes_sub: 'All your notes in one place',
+    shared_title: 'Shared Space', shared_sub: 'Work together seamlessly',
+    family_group: 'Family Planning', family_members: '4 members', invite: 'Invite Member',
+    activity: 'Activity', shared_tasks: 'Shared Tasks', add_item: '+ Add',
+    home: 'Home', tasks_nav: 'Tasks', money_nav: 'Money', shared_nav: 'Shared',
+    quick_access: 'Quick Access', qa_habits: 'Habits', qa_pomo: 'Focus Timer', qa_notes: 'Notes',
+    mood_tired: 'Tired', mood_neutral: 'Neutral', mood_happy: 'Happy', mood_excited: 'Excited', mood_stressed: 'Stressed',
+    sheet_task: 'New Task', sheet_habit: 'New Habit', sheet_note: 'New Note', sheet_money: 'Add Transaction', sheet_shared: 'Add to Shared List',
+    task_ph: 'Task description...', habit_ph: 'Habit name...', note_title_ph: 'Note title...', note_body_ph: 'Write something...',
+    money_ph: 'Description...', amount_ph: 'Amount (৳)',
+    shared_ph: 'What needs to be done?', from_ph: 'From (e.g. Wife, Boss...)',
+    add_btn: 'Add', save_btn: 'Save',
+    urgent: '● High', medium: '● Medium', low: '● Low',
+    work: 'Work', personal: 'Personal', study: 'Study', health: 'Health', learning: 'Learning',
+    income_opt: '↑ Income', expense_opt: '↓ Expense',
+    pro_job: 'Employee', pro_biz: 'Business', pro_free: 'Freelancer', pro_stu: 'Student',
+    chips: ['Plan my day', 'Organize tasks', 'I need motivation', 'Save Summary', 'Financial advice'],
+    chip_prompts: ['Help me plan my day to be more productive.', 'Help me organize and prioritize my tasks.', 'I need some motivation to stay focused.', '', 'Give me financial advice based on my spending.'],
+    ai_welcome: 'Hello! 👋 How can I help you today?',
+    insights: [
+      'You are most productive between 9 – 11 AM',
+      '{n} tasks left today. Focus on the high priority ones first!',
+      'Great job maintaining a {s}-day streak! Keep it up.',
+      'Tip: Drink water every hour to maintain focus.',
+    ],
+    habits_empty: 'No habits yet. Add your first habit!',
+    tasks_empty: 'No tasks yet. Add your first task!',
+    notes_empty: 'No notes yet.',
+    shared_empty: 'No shared tasks yet.',
+    money_empty: 'No transactions yet.',
+    keep_going: 'Great job! Keep going',
+    quote: 'Discipline today, freedom tomorrow.',
+    pomo_lets_go: "Let's get started!",
+    pomo_running: 'Stay focused!',
+    pomo_done: 'Session complete! Take a break.',
+  },
+  bn: {
+    good_morning: 'শুভ সকাল,', good_afternoon: 'শুভ দুপুর,', good_evening: 'শুভ সন্ধ্যা,',
+    how_feeling: 'আজ কেমন আছেন?', daily_prog: 'দৈনিক অগ্রগতি', habit_streak: 'হ্যাবিট স্ট্রিক',
+    ai_insight: '✦ AI পরামর্শ', today_tasks: 'আজকের টাস্ক', view_all: 'সব দেখুন',
+    add_task_quick: '+ টাস্ক যোগ করুন', save_ind: 'ডেটা লোকালি সেভ · রিফ্রেশেও মুছবে না',
+    tasks_title: 'টাস্ক', tasks_sub: 'কাজ গুছিয়ে নিন', today_sec: 'আজকে',
+    ai_name: 'AI সহকারী', ai_online: 'অনলাইন',
+    habits_title: 'হ্যাবিট', habits_sub: 'ভালো অভ্যাস গড়ুন', weekly_streak: 'সাপ্তাহিক স্ট্রিক',
+    money_title: 'মানি ট্র্যাকার', money_sub: 'ট্র্যাক করুন, বিশ্লেষণ করুন', this_month: 'এই মাস',
+    income: 'আয়', expense: 'খরচ', overview: 'সংক্ষিপ্ত', budget_prog: 'বাজেট অগ্রগতি',
+    recent_tx: 'সাম্প্রতিক লেনদেন', add_tx: '+ যোগ করুন',
+    pomo_title: 'ফোকাস টাইমার', pomo_sub: 'মনোযোগী হন, সফল হন',
+    today_sess: 'আজকের সেশন', view_all_sess: 'সব দেখুন',
+    sessions: 'সেশন', focus_time_lbl: 'ফোকাস সময়', break_time: 'বিরতি', focus_time: 'ফোকাস সময়',
+    notes_title: 'নোটস', notes_sub: 'সকল নোট একজায়গায়',
+    shared_title: 'শেয়ার্ড স্পেস', shared_sub: 'একসাথে কাজ করুন',
+    family_group: 'পারিবারিক পরিকল্পনা', family_members: '৪ জন সদস্য', invite: 'সদস্য আমন্ত্রণ',
+    activity: 'কার্যক্রম', shared_tasks: 'শেয়ার্ড টাস্ক', add_item: '+ যোগ করুন',
+    home: 'হোম', tasks_nav: 'টাস্ক', money_nav: 'মানি', shared_nav: 'শেয়ার',
+    quick_access: 'কুইক অ্যাক্সেস', qa_habits: 'হ্যাবিট', qa_pomo: 'ফোকাস টাইমার', qa_notes: 'নোটস',
+    mood_tired: 'ক্লান্ত', mood_neutral: 'সাধারণ', mood_happy: 'খুশি', mood_excited: 'উৎসাহী', mood_stressed: 'চিন্তিত',
+    sheet_task: 'নতুন টাস্ক', sheet_habit: 'নতুন হ্যাবিট', sheet_note: 'নতুন নোট', sheet_money: 'লেনদেন যোগ', sheet_shared: 'শেয়ার্ড লিস্টে যোগ',
+    task_ph: 'টাস্কের বিবরণ...', habit_ph: 'হ্যাবিটের নাম...', note_title_ph: 'নোটের শিরোনাম...', note_body_ph: 'এখানে লিখুন...',
+    money_ph: 'বিবরণ...', amount_ph: 'পরিমাণ (৳)',
+    shared_ph: 'কী করতে হবে?', from_ph: 'কার পক্ষ থেকে? (যেমন: স্ত্রী, বস...)',
+    add_btn: 'যোগ করুন', save_btn: 'সেভ করুন',
+    urgent: '● জরুরি', medium: '● মাঝারি', low: '● সাধারণ',
+    work: 'কাজ', personal: 'ব্যক্তিগত', study: 'পড়াশোনা', health: 'স্বাস্থ্য', learning: 'শেখা',
+    income_opt: '↑ আয়', expense_opt: '↓ খরচ',
+    pro_job: 'চাকরিজীবী', pro_biz: 'ব্যবসায়ী', pro_free: 'ফ্রিল্যান্সার', pro_stu: 'ছাত্র',
+    chips: ['দিন পরিকল্পনা', 'টাস্ক সাজাও', 'অনুপ্রেরণা দাও', 'সামারি সেভ করো', 'আর্থিক পরামর্শ'],
+    chip_prompts: ['আজকের দিনটি পরিকল্পনা করতে সাহায্য করো।', 'আমার টাস্কগুলো সাজাতে সাহায্য করো।', 'আমাকে একটু অনুপ্রেরণা দাও।', '', 'আমার খরচের ভিত্তিতে আর্থিক পরামর্শ দাও।'],
+    ai_welcome: 'আস্সালামু আলাইকুম! 👋 আজ কীভাবে সাহায্য করতে পারি?',
+    insights: [
+      'সকাল ৯–১১টায় আপনি সবচেয়ে বেশি প্রোডাক্টিভ',
+      'আজকে {n}টি টাস্ক বাকি। উচ্চ অগ্রাধিকারগুলো আগে করুন!',
+      '{s} দিনের স্ট্রিক দারুণ! চালিয়ে যান।',
+      'টিপস: প্রতি ঘণ্টায় পানি পান করুন।',
+    ],
+    habits_empty: 'কোনো হ্যাবিট নেই। প্রথম হ্যাবিট যোগ করুন!',
+    tasks_empty: 'কোনো টাস্ক নেই। প্রথম টাস্ক যোগ করুন!',
+    notes_empty: 'কোনো নোট নেই।',
+    shared_empty: 'কোনো শেয়ার্ড টাস্ক নেই।',
+    money_empty: 'কোনো লেনদেন নেই।',
+    keep_going: 'দারুণ! চালিয়ে যান',
+    quote: 'আজকের শৃঙ্খলা, আগামীর স্বাধীনতা।',
+    pomo_lets_go: 'শুরু করুন!',
+    pomo_running: 'মনোযোগী থাকুন!',
+    pomo_done: 'সেশন শেষ! বিরতি নিন।',
+  }
+};
+function T(k) { return TR[S.lang][k] || TR.en[k] || k; }
+
+// ===== LANG =====
+function setLang(l) {
+  S.lang = l; localStorage.setItem('z_lang', l);
+  document.getElementById('btn-en').classList.toggle('on', l === 'en');
+  document.getElementById('btn-bn').classList.toggle('on', l === 'bn');
+  document.body.style.fontFamily = l === 'bn' ? "'Hind Siliguri','Inter',sans-serif" : "'Inter','Hind Siliguri',sans-serif";
+  applyLabels(); renderAll();
+}
+
+function applyLabels() {
+  const m = {
+    'lbl-good-time': getGreeting(),
+    'lbl-how-feeling': T('how_feeling'), 'lbl-daily-prog': T('daily_prog'),
+    'lbl-habit-streak': T('habit_streak'), 'lbl-ai-insight': T('ai_insight'),
+    'lbl-today-tasks': T('today_tasks'), 'lbl-view-all': T('view_all'),
+    'lbl-add-task-quick': T('add_task_quick'), 'lbl-save-ind': T('save_ind'),
+    'lbl-quick-access': T('quick_access'), 'lbl-qa-habits': T('qa_habits'),
+    'lbl-qa-pomo': T('qa_pomo'), 'lbl-qa-notes': T('qa_notes'),
+    'lbl-tasks-title': T('tasks_title'), 'lbl-tasks-sub': T('tasks_sub'), 'lbl-today-sec': T('today_sec'),
+    'lbl-ai-name': T('ai_name'), 'lbl-ai-online': T('ai_online'),
+    'lbl-habits-title': T('habits_title'), 'lbl-habits-sub': T('habits_sub'), 'lbl-weekly-streak': T('weekly_streak'),
+    'lbl-money-title': T('money_title'), 'lbl-money-sub': T('money_sub'), 'lbl-this-month': T('this_month'),
+    'lbl-income': T('income'), 'lbl-expense': T('expense'), 'lbl-overview': T('overview'),
+    'lbl-budget-prog': T('budget_prog'), 'lbl-recent-tx': T('recent_tx'), 'lbl-add-tx': T('add_tx'),
+    'lbl-pomo-title': T('pomo_title'), 'lbl-pomo-sub': T('pomo_sub'),
+    'lbl-today-sess': T('today_sess'), 'lbl-view-all-sess': T('view_all_sess'),
+    'lbl-sessions': T('sessions'), 'lbl-focus-time-lbl': T('focus_time_lbl'),
+    'lbl-break-time': T('break_time'), 'lbl-focus-time': T('focus_time'),
+    'lbl-notes-title': T('notes_title'), 'lbl-notes-sub': T('notes_sub'),
+    'lbl-shared-title': T('shared_title'), 'lbl-shared-sub': T('shared_sub'),
+    'lbl-family-group': T('family_group'), 'lbl-family-members': T('family_members'),
+    'lbl-invite': T('invite'), 'lbl-activity': T('activity'),
+    'lbl-shared-tasks': T('shared_tasks'), 'lbl-add-item': T('add_item'),
+    'nl-home': T('home'), 'nl-tasks': T('tasks_nav'), 'nl-money': T('money_nav'), 'nl-profile': T('shared_nav'),
+  };
+  Object.entries(m).forEach(([id, val]) => { const e = document.getElementById(id); if (e) e.textContent = val; });
+  renderChips();
+}
+
+function getGreeting() {
+  const h = new Date().getHours();
+  return h < 12 ? T('good_morning') : h < 17 ? T('good_afternoon') : T('good_evening');
+}
+
+// ===== NAV =====
+const PAGES = ['home','tasks','ai','habits','money','pomo','notes','shared','profile'];
+let _navInitDone = false;
+function showPage(id, fromHistory) {
+  PAGES.forEach(p => {
+    document.getElementById('page-' + p)?.classList.remove('on');
+    document.getElementById('nb-' + p)?.classList.remove('on');
+  });
+  document.getElementById('page-' + id)?.classList.add('on');
+  document.getElementById('nb-' + id)?.classList.add('on');
+  if (id === 'home') renderHome();
+  if (id === 'tasks') renderTasks();
+  if (id === 'habits') renderHabits();
+  if (id === 'money') renderMoney();
+  if (id === 'notes') renderNotes();
+  if (id === 'shared') { renderShared(); renderContacts(); renderAISendExamples(); setTimeout(updateRoomUI, 100); }
+  if (id === 'ai') renderChat();
+  if (id === 'profile') renderProfile();
+
+  // Push a history entry so the phone's back button navigates within the
+  // app (closing sheets / going to previous page) instead of exiting it.
+  if (!fromHistory) {
+    if (!_navInitDone) {
+      // First page load: replace so we always have a base 'home' entry to land on.
+      history.replaceState({ page: 'home' }, '');
+      if (id !== 'home') history.pushState({ page: id }, '');
+      _navInitDone = true;
+    } else {
+      history.pushState({ page: id }, '');
+    }
+  }
+}
+
+window.addEventListener('popstate', (e) => {
+  const overlay = document.getElementById('sheet-overlay');
+  const state = e.state || {};
+  // Back was pressed while a sheet was open and we're now landing on the
+  // page state beneath it -> just close the sheet, stay on the same page.
+  if (overlay && overlay.classList.contains('on') && !state.sheet) {
+    overlay.classList.remove('on');
+    return;
+  }
+  const page = state.page || 'home';
+  showPage(page, true);
+});
+
+function renderAll() {
+  const on = document.querySelector('.page.on');
+  if (on) showPage(on.id.replace('page-', ''));
+}
+
+// ===== MOOD =====
+const MOODS = [
+  { id: 'tired', svg: '<svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" fill="#FFF0EE" stroke="#E8341C" stroke-width="1.5"/><ellipse cx="12.5" cy="17" rx="2.5" ry="3" fill="#E8341C" opacity=".3"/><ellipse cx="23.5" cy="17" rx="2.5" ry="3" fill="#E8341C" opacity=".3"/><path d="M13 24c1.5-1 8.5-1 10 0" stroke="#E8341C" stroke-width="1.5" stroke-linecap="round"/></svg>' },
+  { id: 'neutral', svg: '<svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" fill="#FFFBEB" stroke="#F59E0B" stroke-width="1.5"/><circle cx="13" cy="16" r="2" fill="#F59E0B"/><circle cx="23" cy="16" r="2" fill="#F59E0B"/><line x1="13" y1="24" x2="23" y2="24" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/></svg>' },
+  { id: 'happy', svg: '<svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" fill="#F0FDF4" stroke="#22C55E" stroke-width="1.5"/><circle cx="13" cy="15" r="2" fill="#22C55E"/><circle cx="23" cy="15" r="2" fill="#22C55E"/><path d="M12 22c1.5 3 10.5 3 12 0" stroke="#22C55E" stroke-width="1.5" stroke-linecap="round"/></svg>' },
+  { id: 'excited', svg: '<svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" fill="#EFF6FF" stroke="#3B82F6" stroke-width="1.5"/><path d="M11 14c0-1 4-1 4 1M21 14c0-1 4-1 4 1" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/><path d="M11 22c2 4 12 4 14 0" stroke="#3B82F6" stroke-width="1.5" stroke-linecap="round"/></svg>' },
+  { id: 'stressed', svg: '<svg viewBox="0 0 36 36" fill="none"><circle cx="18" cy="18" r="17" fill="#F5F3FF" stroke="#8B5CF6" stroke-width="1.5"/><path d="M11 14c1-2 3-2 4 0M21 14c1-2 3-2 4 0" stroke="#8B5CF6" stroke-width="1.5" stroke-linecap="round"/><path d="M13 24c1.5-2.5 8.5-2.5 10 0" stroke="#8B5CF6" stroke-width="1.5" stroke-linecap="round"/></svg>' },
+];
+function renderMoodRow() {
+  const r = document.getElementById('mood-row'); if (!r) return;
+  r.innerHTML = MOODS.map(m => `
+    <div class="mood-chip ${S.mood === m.id ? 'on' : ''}" onclick="setMood('${m.id}')">
+      ${m.svg}
+      <span>${T('mood_' + m.id)}</span>
+    </div>`).join('');
+}
+function setMood(id) {
+  S.mood = id; localStorage.setItem('z_mood', id);
+  renderMoodRow(); showToast('Mood updated!');
+}
+
+// ===== TASKS =====
+let taskFilter = 'all', priFilter = 'all';
+function addTask(text, pri, cat) {
+  S.tasks.push({ id: Date.now(), text, pri, cat, done: false, date: new Date().toLocaleDateString() });
+  save('tasks', S.tasks); closeSheet(); renderTasks(); updateProgress(); showToast(S.lang==='bn'?'টাস্ক যোগ হয়েছে!':'Task added!');
+}
+function toggleTask(id) {
+  const t = S.tasks.find(t => t.id === id); if (t) { t.done = !t.done; save('tasks', S.tasks); renderTasks(); renderHome(); updateProgress(); }
+}
+function renderTasks() {
+  const list = document.getElementById('tasks-list');
+  const home = document.getElementById('home-tasks-list');
+  let tasks = S.tasks;
+  if (taskFilter !== 'all') tasks = tasks.filter(t => t.cat === taskFilter);
+  if (priFilter !== 'all') tasks = tasks.filter(t => t.pri === priFilter);
+  const priMap = { h: T('urgent'), m: T('medium'), l: T('low') };
+  const priColor = { h: 'pri-h', m: 'pri-m', l: 'pri-l' };
+  const mkTask = t => `
+    <div class="task-item">
+      <div class="task-check ${t.done ? 'on' : ''}" onclick="toggleTask(${t.id})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="task-body">
+        <div class="task-name ${t.done ? 'done' : ''}">${t.text}</div>
+        <div class="task-meta">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          ${t.date}
+        </div>
+      </div>
+      <span class="task-cat">${t.cat || ''}</span>
+      <span class="pri-badge ${priColor[t.pri] || 'pri-m'}">${priMap[t.pri] || '●'}</span>
+      <div class="task-more" onclick="deleteTask(${t.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6M14 11v6"/></svg></div>
+    </div>`;
+  const empty = `<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">${T('tasks_empty')}</div>`;
+  if (list) list.innerHTML = tasks.length ? tasks.map(mkTask).join('') : empty;
+  if (home) home.innerHTML = S.tasks.length ? S.tasks.slice(0, 3).map(mkTask).join('') : empty;
+}
+function deleteTask(id) { S.tasks = S.tasks.filter(t => t.id !== id); save('tasks', S.tasks); renderTasks(); renderHome(); updateProgress(); }
+function filterTasks(f, el) { taskFilter = f; document.querySelectorAll('#page-tasks .filter-tabs:first-of-type .filter-tab').forEach(b => b.classList.remove('on')); el.classList.add('on'); renderTasks(); }
+function filterPri(f, el) { priFilter = f; document.querySelectorAll('#page-tasks .filter-tabs:nth-of-type(2) .filter-tab').forEach(b => b.classList.remove('on')); el.classList.add('on'); renderTasks(); }
+function filterNotes(f, el) { document.querySelectorAll('#page-notes .filter-tab').forEach(b => b.classList.remove('on')); el.classList.add('on'); renderNotes(f); }
+
+// ===== HABITS =====
+const HABIT_ICONS = {
+  pray: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L8 8H4l3 3-1 4 6-3 6 3-1-4 3-3h-4z"/></svg>',
+  gym: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4v6M18 4v6M3 8h4M17 8h4M6 20v-4M18 20v-4M3 16h4M17 16h4M8 12h8"/></svg>',
+  book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>',
+  water: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2C6 8.5 4 13 4 16a8 8 0 0 0 16 0c0-3-2-7.5-8-14z"/></svg>',
+  run: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="5" r="1.5" fill="currentColor"/><path d="M9 19l3-8 4 4-2 4M6 12l3-5 4 2 3-3"/></svg>',
+  sleep: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>',
+  food: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/><line x1="6" y1="1" x2="6" y2="4"/><line x1="10" y1="1" x2="10" y2="4"/><line x1="14" y1="1" x2="14" y2="4"/></svg>',
+};
+const HABIT_COLORS = ['#FFF0EE', '#F0FDF4', '#EFF6FF', '#FFFBEB', '#F5F3FF', '#FFF0EE', '#F0FDF4'];
+const HABIT_STROKE = ['#E8341C', '#22C55E', '#3B82F6', '#F59E0B', '#8B5CF6', '#E8341C', '#22C55E'];
+const DAYS_EN = ['M','T','W','T','F','S','S'];
+const DAYS_BN = ['সো','মঙ','বু','বৃ','শু','শ','র'];
+
+function addHabit(name, icon) {
+  S.habits.push({ id: Date.now(), name, icon, days: [false,false,false,false,false,false,false], streak: 0 });
+  save('habits', S.habits); closeSheet(); renderHabits(); showToast(S.lang==='bn'?'হ্যাবিট যোগ হয়েছে!':'Habit added!');
+}
+function toggleHabitDay(id, di) {
+  const h = S.habits.find(h => h.id === id); if (!h) return;
+  h.days[di] = !h.days[di]; h.streak = h.days.filter(Boolean).length;
+  save('habits', S.habits); renderHabits();
+}
+function renderHabits() {
+  // Week strip
+  const strip = document.getElementById('week-strip'); if (!strip) return;
+  const days = S.lang === 'bn' ? DAYS_BN : DAYS_EN;
+  strip.innerHTML = days.map((d, i) => {
+    const anyDone = S.habits.some(h => h.days[i]);
+    return `<div class="day-col"><div class="day-label">${d}</div><div class="day-dot ${anyDone ? 'on' : ''}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg></div></div>`;
+  }).join('');
+  // Habits list
+  const list = document.getElementById('habits-list'); if (!list) return;
+  if (!S.habits.length) { list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">${T('habits_empty')}</div>`; return; }
+  list.innerHTML = S.habits.map((h, idx) => {
+    const pct = Math.round(h.days.filter(Boolean).length / 7 * 100);
+    const circ = 2 * Math.PI * 16;
+    const offset = circ * (1 - pct / 100);
+    const col = HABIT_STROKE[idx % HABIT_STROKE.length];
+    const bg = HABIT_COLORS[idx % HABIT_COLORS.length];
+    return `
+      <div class="habit-item">
+        <div class="habit-ico" style="background:${bg};color:${col};">${HABIT_ICONS[h.icon] || HABIT_ICONS.book}</div>
+        <div class="habit-body">
+          <div class="habit-name">${h.name}</div>
+          <div class="habit-sub">${h.days.filter(Boolean).length}/7 ${S.lang === 'bn' ? 'দিন' : 'days'}</div>
+          <div style="display:flex;gap:4px;margin-top:6px;">
+            ${(S.lang === 'bn' ? DAYS_BN : DAYS_EN).map((d, i) => `<div class="h-day ${h.days[i] ? 'on' : ''}" onclick="toggleHabitDay(${h.id},${i})" style="${h.days[i] ? 'background:' + col + ';color:white;' : ''}">${d}</div>`).join('')}
+          </div>
+        </div>
+        <div class="habit-ring">
+          <svg viewBox="0 0 42 42"><circle fill="none" stroke="#F3F4F6" stroke-width="4" cx="21" cy="21" r="16"/><circle fill="none" stroke="${col}" stroke-width="4" stroke-linecap="round" cx="21" cy="21" r="16" stroke-dasharray="${circ}" stroke-dashoffset="${offset}" transform="rotate(-90 21 21)"/></svg>
+          <div class="habit-ring-pct">${pct}%</div>
+        </div>
+      </div>`;
+  }).join('');
+  // Quote
+  const q = document.getElementById('quote-text'); if (q) q.textContent = T('quote');
+}
+
+// ===== MONEY =====
+let currentProfession = S.profession;
+function setProfession(p, el) {
+  currentProfession = p; S.profession = p; localStorage.setItem('z_prof', p);
+  document.querySelectorAll('.money-tab').forEach(b => b.classList.remove('on')); el.classList.add('on');
+  renderMoney();
+}
+function addMoney(desc, amount, type, cat) {
+  S.money.push({ id: Date.now(), desc, amount: parseFloat(amount), type, cat, date: new Date().toLocaleDateString() });
+  save('money', S.money); closeSheet(); renderMoney(); showToast(S.lang==='bn'?'লেনদেন যোগ হয়েছে!':'Transaction added!');
+}
+function renderMoney() {
+  const income = S.money.filter(m => m.type === 'income').reduce((s, m) => s + m.amount, 0);
+  const expense = S.money.filter(m => m.type === 'expense').reduce((s, m) => s + m.amount, 0);
+  const saving = income - expense;
+  const fmt = n => '৳ ' + n.toLocaleString();
+  const ie = document.getElementById('tot-income'); if (ie) ie.textContent = fmt(income);
+  const ee = document.getElementById('tot-expense'); if (ee) ee.textContent = fmt(expense);
+  const budget = income || 70000;
+  const pct = income ? Math.min(100, Math.round(expense / income * 100)) : 0;
+  const bpct = document.getElementById('budget-pct'); if (bpct) bpct.textContent = pct + '%';
+  const bf = document.getElementById('budget-fill'); if (bf) bf.style.width = pct + '%';
+  const bl = document.getElementById('budget-label'); if (bl) bl.textContent = fmt(expense) + ' / ' + fmt(income || budget);
+  // Chart
+  const chart = document.getElementById('money-chart');
+  if (chart) {
+    const W = chart.offsetWidth || 300, H = 120;
+    const pts = 8;
+    const incArr = Array.from({length: pts}, (_, i) => Math.max(0, income / pts * (0.7 + Math.random() * 0.6)));
+    const expArr = Array.from({length: pts}, (_, i) => Math.max(0, expense / pts * (0.6 + Math.random() * 0.8)));
+    const maxV = Math.max(...incArr, ...expArr, 1);
+    const px = i => (i / (pts - 1)) * (W - 20) + 10;
+    const py = v => H - 10 - (v / maxV) * (H - 20);
+    const makePath = arr => arr.map((v, i) => (i === 0 ? 'M' : 'L') + px(i) + ',' + py(v)).join(' ');
+    chart.innerHTML = `<svg width="100%" height="${H}" viewBox="0 0 ${W} ${H}">
+      <defs>
+        <linearGradient id="ig" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#22C55E" stop-opacity="0.2"/><stop offset="100%" stop-color="#22C55E" stop-opacity="0"/></linearGradient>
+        <linearGradient id="eg" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#E8341C" stop-opacity="0.15"/><stop offset="100%" stop-color="#E8341C" stop-opacity="0"/></linearGradient>
+      </defs>
+      <path d="${makePath(incArr)} L${px(pts-1)},${H} L${px(0)},${H} Z" fill="url(#ig)"/>
+      <path d="${makePath(expArr)} L${px(pts-1)},${H} L${px(0)},${H} Z" fill="url(#eg)"/>
+      <path d="${makePath(incArr)}" fill="none" stroke="#22C55E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="${makePath(expArr)}" fill="none" stroke="#E8341C" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>`;
+  }
+  // List
+  const list = document.getElementById('money-list'); if (!list) return;
+  if (!S.money.length) { list.innerHTML = `<div style="text-align:center;padding:24px;color:var(--text3);font-size:13px;">${T('money_empty')}</div>`; return; }
+  const catIco = { food: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8h1a4 4 0 0 1 0 8h-1"/><path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/></svg>', rent: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>', salary: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>', other: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>' };
+  list.innerHTML = [...S.money].reverse().slice(0, 8).map(m => `
+    <div class="tx-item">
+      <div class="tx-ico" style="background:${m.type === 'income' ? 'var(--greenbg)' : 'var(--redbg)'};color:${m.type === 'income' ? 'var(--green)' : 'var(--red)'};">${catIco[m.cat] || catIco.other}</div>
+      <div class="tx-body"><div class="tx-name">${m.desc}</div><div class="tx-date">${m.date}</div></div>
+      <div class="tx-amt ${m.type}">${m.type === 'income' ? '+' : '-'}৳${m.amount.toLocaleString()}</div>
+    </div>`).join('');
+}
+
+// ===== NOTES =====
+function addNote(title, body, cat) {
+  S.notes.push({ id: Date.now(), title, body, cat: cat || 'personal', date: new Date().toLocaleDateString(), source: 'manual' });
+  save('notes', S.notes); closeSheet(); renderNotes(); showToast(S.lang==='bn'?'নোট সেভ হয়েছে!':'Note saved!');
+}
+function deleteNote(id) { S.notes = S.notes.filter(n => n.id !== id); save('notes', S.notes); renderNotes(); }
+function renderNotes(filter) {
+  const list = document.getElementById('notes-list'); if (!list) return;
+  let notes = S.notes;
+  if (filter && filter !== 'all') notes = notes.filter(n => n.cat === filter || (filter === 'ai' && n.source === 'ai'));
+  if (!notes.length) { list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text3);font-size:13px;">${T('notes_empty')}</div>`; return; }
+  list.innerHTML = [...notes].reverse().map(n => `
+    <div class="note-card">
+      <div class="note-top">
+        <div class="note-title">${n.title}</div>
+        <div class="bmark" onclick="deleteNote(${n.id})"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg></div>
+      </div>
+      <div class="note-prev">${n.body.substring(0, 100)}${n.body.length > 100 ? '...' : ''}</div>
+      <div class="note-bot">
+        <div class="note-date">${n.date}</div>
+        <span class="note-tag ${n.source === 'ai' ? 'ai' : 'manual'}">${n.source === 'ai' ? 'AI Summary' : n.cat || 'Note'}</span>
+      </div>
+    </div>`).join('');
+}
+
+// ===== SHARED =====
+function addShared(text, pri, from) {
+  S.shared.push({ id: Date.now(), text, pri, from: from || 'Me', done: false, date: new Date().toLocaleDateString() });
+  save('shared', S.shared); closeSheet(); renderShared(); showToast(S.lang==='bn'?'যোগ হয়েছে!':'Added!');
+}
+function toggleShared(id) {
+  const s = S.shared.find(s => s.id === id); if (s) { s.done = !s.done; save('shared', S.shared); renderShared(); }
+}
+function renderShared() {
+  const list = document.getElementById('shared-list'); if (!list) return;
+  if (!S.shared.length) {
+    list.innerHTML = `<div style="text-align:center;padding:24px 0 12px;">
+      <div style="font-size:28px;margin-bottom:8px;">📋</div>
+      <div style="font-size:13px;color:var(--text3);">No shared tasks yet</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px;">Tap <b>+ Add</b> to add the first task</div>
+    </div>`;
+    return;
+  }
+  list.innerHTML = S.shared.map(s => `
+    <div class="sh-task">
+      <div class="sh-chk ${s.done ? 'on' : ''}" onclick="toggleSharedFirebase(${s.id})">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div style="flex:1;min-width:0;">
+        <div class="sh-task-name ${s.done ? 'done' : ''}">${s.text}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:2px;">by ${s.from} · <span style="color:${s.pri==='urgent'?'var(--red)':'var(--green)'};">${s.pri==='urgent'?'🔴 Urgent':'🟢 Normal'}</span></div>
+      </div>
+      <button onclick="deleteSharedFirebase(${s.id})" style="padding:4px 8px;background:none;border:none;cursor:pointer;font-size:14px;color:var(--text3);">✕</button>
+    </div>`).join('');
+}
+
+// ===== HOME =====
+// ===== PROFILE =====
+const P_FIELDS = ['name','nick','email','phone','profession','city','bio'];
+let PROF = (() => {
+  try { return JSON.parse(localStorage.getItem('z_profile') || '{}'); } catch(e) { return {}; }
+})();
+
+function saveProfile() {
+  P_FIELDS.forEach(f => { PROF[f] = document.getElementById('pf-' + f)?.value.trim() || ''; });
+  localStorage.setItem('z_profile', JSON.stringify(PROF));
+  renderProfile();
+  updateTopbarAvatar();
+  showToast('✅ Profile saved!');
+}
+
+function renderProfile() {
+  // Populate form fields
+  P_FIELDS.forEach(f => {
+    const el = document.getElementById('pf-' + f);
+    if (el) el.value = PROF[f] || '';
+  });
+  // Hero section
+  const name = PROF.name || 'Your Name';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2) || '?';
+  const avatarEl = document.getElementById('profile-avatar-lg');
+  if (avatarEl) avatarEl.textContent = initials;
+  const nameEl = document.getElementById('profile-display-name');
+  if (nameEl) nameEl.textContent = name;
+  const metaEl = document.getElementById('profile-display-meta');
+  if (metaEl) {
+    const parts = [];
+    if (PROF.city) parts.push('📍 ' + PROF.city);
+    if (PROF.profession) parts.push({ job: 'Employee', biz: 'Business', free: 'Freelancer', stu: 'Student' }[PROF.profession] || '');
+    metaEl.textContent = parts.filter(Boolean).join(' · ') || 'Set up your profile';
+  }
+}
+
+function updateTopbarAvatar() {
+  const btn = document.getElementById('topbar-avatar-btn');
+  if (!btn) return;
+  const name = PROF.name || '';
+  const initials = name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+  if (initials) {
+    btn.textContent = initials;
+    btn.style.fontSize = '13px';
+  } else {
+    btn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>';
+  }
+}
+
+function renderHome() {
+  renderMoodRow(); renderTasks(); updateProgress();
+  // Show user's first name on home screen
+  const nameEl = document.getElementById('home-user-name');
+  if (nameEl) {
+    const nick = PROF.nick || (PROF.name ? PROF.name.split(' ')[0] : '');
+    nameEl.textContent = nick ? nick + ' 👋' : 'ZindagiAI 👋';
+  }
+  const insights = T('insights');
+  const txt = insights[Math.floor(Math.random() * insights.length)]
+    .replace('{n}', S.tasks.filter(t => !t.done).length)
+    .replace('{s}', 7);
+  const el = document.getElementById('ai-insight-text'); if (el) el.textContent = txt;
+}
+function updateProgress() {
+  const done = S.tasks.filter(t => t.done).length, total = S.tasks.length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  const circ = 163, offset = circ * (1 - pct / 100);
+  const d = document.getElementById('prog-donut'); if (d) d.style.strokeDashoffset = offset;
+  const p = document.getElementById('prog-pct'); if (p) p.textContent = pct + '%';
+  const s = document.getElementById('prog-sub'); if (s) s.textContent = T('keep_going');
+}
+
+// ===== POMO =====
+let pomoSecs = 25 * 60, pomoRunning = false, pomoInterval = null, pomoSessions = 0, pomoFocusSecs = 0;
+function togglePomo() {
+  const icon = document.getElementById('pomo-play-icon');
+  if (pomoRunning) {
+    clearInterval(pomoInterval); pomoRunning = false;
+    if (icon) icon.outerHTML = '<polygon points="5 3 19 12 5 21 5 3" fill="currentColor" id="pomo-play-icon"/>';
+    document.getElementById('pomo-bot-lbl').textContent = T('pomo_lets_go');
+  } else {
+    pomoRunning = true;
+    if (icon) icon.outerHTML = '<rect x="6" y="4" width="4" height="16" fill="currentColor" id="pomo-play-icon"/><rect x="14" y="4" width="4" height="16" fill="currentColor"/>';
+    document.getElementById('pomo-bot-lbl').textContent = T('pomo_running');
+    pomoInterval = setInterval(() => {
+      if (pomoSecs > 0) { pomoSecs--; pomoFocusSecs++; updatePomoDisp(); }
+      else {
+        clearInterval(pomoInterval); pomoRunning = false; pomoSessions++;
+        S.pomo++; localStorage.setItem('z_pomo', S.pomo);
+        document.getElementById('pomo-cnt').textContent = pomoSessions;
+        const ft = Math.floor(pomoFocusSecs / 60);
+        document.getElementById('pomo-focus-time').textContent = Math.floor(ft / 60) + 'h ' + (ft % 60) + 'm';
+        document.getElementById('pomo-bot-lbl').textContent = T('pomo_done');
+        pomoSecs = 25 * 60; updatePomoDisp(); showToast(T('pomo_done'));
+      }
+    }, 1000);
+  }
+}
+function resetPomo() { clearInterval(pomoInterval); pomoRunning = false; pomoSecs = 25 * 60; updatePomoDisp(); document.getElementById('pomo-bot-lbl').textContent = T('pomo_lets_go'); }
+function setPomoMode(mins, label, el) {
+  clearInterval(pomoInterval); pomoRunning = false; pomoSecs = mins * 60;
+  document.querySelectorAll('.pomo-tab').forEach(b => b.classList.remove('on')); el.classList.add('on');
+  document.getElementById('lbl-focus-time').textContent = label; updatePomoDisp();
+}
+function updatePomoDisp() {
+  const m = Math.floor(pomoSecs / 60).toString().padStart(2, '0');
+  const s = (pomoSecs % 60).toString().padStart(2, '0');
+  const d = document.getElementById('pomo-disp'); if (d) d.textContent = m + ':' + s;
+  const ring = document.getElementById('pomo-ring');
+  if (ring) { const total = 25 * 60, pct = pomoSecs / total; ring.style.strokeDashoffset = 628 * (1 - pct); }
+}
+
+// ===== AI CHAT =====
+function renderChat() {
+  const c = document.getElementById('chat-msgs'); if (!c) return;
+  if (!S.chat.length) {
+    c.innerHTML = `<div class="msg ai"><div class="msg-bbl">${T('ai_welcome').replace(/\n/g,'<br>')}</div></div>`;
+    return;
+  }
+  // Build messages safely
+  c.innerHTML = '';
+  S.chat.forEach(m => {
+    const d = document.createElement('div'); d.className = 'msg ' + m.role;
+    const bbl = document.createElement('div'); bbl.className = 'msg-bbl';
+    bbl.innerHTML = m.text;
+    if (m.role === 'ai') {
+      const saveBtn = document.createElement('button');
+      saveBtn.className = 'save-to-notes';
+      saveBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>' + (S.lang==='bn'?'নোটে সেভ করো':'Save to Notes');
+      saveBtn.onclick = () => saveToNotes(m.text);
+      bbl.appendChild(document.createElement('br'));
+      bbl.appendChild(saveBtn);
+    }
+    d.appendChild(bbl); c.appendChild(d);
+  });
+  c.scrollTop = c.scrollHeight;
+  renderChips();
+}
+function renderChips() {
+  const c = document.getElementById('quick-chips'); if (!c) return;
+  const chips = T('chips');
+  const prompts = T('chip_prompts');
+  c.innerHTML = '';
+  chips.forEach((ch, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = ch;
+    btn.onclick = i === 3 ? summarizeChat : () => quickPrompt(prompts[i]);
+    c.appendChild(btn);
+  });
+}
+function addMsg(role, text) {
+  const c = document.getElementById('chat-msgs'); if (!c) return;
+  const d = document.createElement('div'); d.className = 'msg ' + role;
+  const bbl = document.createElement('div'); bbl.className = 'msg-bbl';
+  bbl.innerHTML = text;
+  if (role === 'ai') {
+    const saveBtn = document.createElement('button');
+    saveBtn.className = 'save-to-notes';
+    saveBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/></svg>' + (S.lang==='bn'?'নোটে সেভ করো':'Save to Notes');
+    saveBtn.onclick = () => saveToNotes(text);
+    bbl.appendChild(document.createElement('br'));
+    bbl.appendChild(saveBtn);
+  }
+  d.appendChild(bbl);
+  c.appendChild(d); c.scrollTop = c.scrollHeight;
+}
+const _origSendChat = null;
+const GEMINI_KEY = 'AIzaSyBhUjt5gpbcszqaGu6PiYN60Ief8Fd4Um0';
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`;
+
+async function _gemini(systemPrompt, messages) {
+  const contents = messages.map(m => ({
+    role: m.role === 'ai' ? 'model' : 'user',
+    parts: [{ text: m.text || m.content || '' }]
+  }));
+  const body = {
+    system_instruction: { parts: [{ text: systemPrompt }] },
+    contents,
+    generationConfig: { maxOutputTokens: 1000, temperature: 0.8 }
+  };
+  const res = await fetch(GEMINI_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error?.message || 'Gemini error');
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || 'Sorry, no response.';
+}
+
+async function sendChat() {
+  const inp = document.getElementById('chat-inp'); if (!inp) return;
+  const text = inp.value.trim(); if (!text) return;
+  inp.value = '';
+  addMsg('user', text); S.chat.push({ role: 'user', text });
+  const c = document.getElementById('chat-msgs');
+  const typ = document.createElement('div'); typ.className = 'msg ai';
+  typ.innerHTML = '<div class="msg-bbl"><div class="typing-bbl"><span></span><span></span><span></span></div></div>';
+  c.appendChild(typ); c.scrollTop = c.scrollHeight;
+  try {
+    const lng = S.lang === 'bn' ? 'Bengali (Bangla)' : 'English';
+    const sys = `You are ZindagiAI, a personal productivity AI assistant. Always respond in ${lng}. Be concise, warm, and helpful. User data: mood=${S.mood}, tasks pending=${S.tasks.filter(t=>!t.done).length}, habits=${S.habits.length}, pomo today=${S.pomo}.`;
+    const msgs = S.chat.slice(-10);
+    const reply = await _gemini(sys, msgs);
+    c.removeChild(typ); addMsg('ai', reply); S.chat.push({ role: 'ai', text: reply }); save('chat', S.chat);
+  } catch (e) { c.removeChild(typ); addMsg('ai', S.lang === 'bn' ? 'নেটওয়ার্ক সমস্যা।' : 'Network error: ' + e.message); }
+}
+function quickPrompt(t) { const inp = document.getElementById('chat-inp'); if (inp) { inp.value = t; sendChat(); } }
+async function summarizeChat() {
+  if (S.chat.length < 2) { showToast(S.lang === 'bn' ? 'আগে কথা বলুন!' : 'Chat first!'); return; }
+  const convo = S.chat.map(m => (m.role === 'ai' ? 'AI' : 'User') + ': ' + m.text).join('\n');
+  try {
+    const sys = `Summarize the following conversation clearly and concisely in ${S.lang === 'bn' ? 'Bengali' : 'English'}.`;
+    const reply = await _gemini(sys, [{ role: 'user', text: convo }]);
+    addNote(S.lang === 'bn' ? 'AI সামারি' : 'AI Summary', reply, 'ai');
+    S.notes[S.notes.length - 1].source = 'ai'; save('notes', S.notes);
+    showToast(S.lang === 'bn' ? 'নোটে সেভ হয়েছে!' : 'Summary saved to notes!');
+  } catch (e) { showToast('Error: ' + e.message); }
+}
+function saveToNotes(text) {
+  addNote(S.lang === 'bn' ? 'AI নোট' : 'AI Note', text, 'ai');
+  S.notes[S.notes.length - 1].source = 'ai'; save('notes', S.notes);
+  showToast(S.lang === 'bn' ? 'নোটে সেভ হয়েছে!' : 'Saved to notes!');
+}
+
+// ===== VOICE =====
+let recog = null, isRec = false;
+function toggleVoice() {
+  const btn = document.getElementById('voice-btn');
+  if (!('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) { showToast('Voice not supported'); return; }
+  if (isRec) { recog?.stop(); isRec = false; btn?.classList.remove('rec'); return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recog = new SR(); recog.lang = S.lang === 'bn' ? 'bn-BD' : 'en-US';
+  recog.onresult = e => { const inp = document.getElementById('chat-inp'); if (inp) { inp.value = e.results[0][0].transcript; sendChat(); } isRec = false; btn?.classList.remove('rec'); };
+  recog.onerror = () => { isRec = false; btn?.classList.remove('rec'); };
+  recog.start(); isRec = true; btn?.classList.add('rec');
+  showToast(S.lang === 'bn' ? 'বলুন...' : 'Listening...');
+}
+
+// ===== SHEETS =====
+function openSheet(type) {
+  const overlay = document.getElementById('sheet-overlay');
+  const content = document.getElementById('sheet-content');
+  const sheets = {
+    task: `<div class="sheet-handle"></div><h2>${T('sheet_task')}</h2>
+      <div class="frow">
+        <div><div class="lbl">${S.lang==='bn'?'বিবরণ':'Description'}</div><input class="inp" id="si-task" placeholder="${T('task_ph')}"></div>
+        <div class="f2">
+          <div><div class="lbl">${S.lang==='bn'?'অগ্রাধিকার':'Priority'}</div>
+          <select class="inp" id="si-pri"><option value="h">${T('urgent')}</option><option value="m" selected>${T('medium')}</option><option value="l">${T('low')}</option></select></div>
+          <div><div class="lbl">${S.lang==='bn'?'ক্যাটাগরি':'Category'}</div>
+          <select class="inp" id="si-cat"><option value="work">${T('work')}</option><option value="personal">${T('personal')}</option><option value="study">${T('study')}</option><option value="health">${T('health')}</option></select></div>
+        </div>
+        <button class="btn-full" onclick="addTask(document.getElementById('si-task').value,document.getElementById('si-pri').value,document.getElementById('si-cat').value)">${T('add_btn')}</button>
+      </div>`,
+    habit: `<div class="sheet-handle"></div><h2>${T('sheet_habit')}</h2>
+      <div class="frow">
+        <div><div class="lbl">${S.lang==='bn'?'নাম':'Name'}</div><input class="inp" id="si-habit" placeholder="${T('habit_ph')}"></div>
+        <div><div class="lbl">${S.lang==='bn'?'আইকন':'Icon'}</div>
+        <select class="inp" id="si-hico">
+          <option value="pray">${S.lang==='bn'?'নামাজ':'Prayer'}</option>
+          <option value="gym">${S.lang==='bn'?'ব্যায়াম':'Exercise'}</option>
+          <option value="book">${S.lang==='bn'?'পড়াশোনা':'Study'}</option>
+          <option value="water">${S.lang==='bn'?'পানি পান':'Drink Water'}</option>
+          <option value="run">${S.lang==='bn'?'হাঁটা':'Walk/Run'}</option>
+          <option value="sleep">${S.lang==='bn'?'ঘুম':'Sleep'}</option>
+          <option value="food">${S.lang==='bn'?'স্বাস্থ্যকর খাবার':'Healthy Eating'}</option>
+        </select></div>
+        <button class="btn-full" onclick="addHabit(document.getElementById('si-habit').value,document.getElementById('si-hico').value)">${T('add_btn')}</button>
+      </div>`,
+    note: `<div class="sheet-handle"></div><h2>${T('sheet_note')}</h2>
+      <div class="frow">
+        <div><div class="lbl">${S.lang==='bn'?'শিরোনাম':'Title'}</div><input class="inp" id="si-ntitle" placeholder="${T('note_title_ph')}"></div>
+        <div><div class="lbl">${S.lang==='bn'?'বিষয়বস্তু':'Content'}</div><textarea class="inp" id="si-nbody" placeholder="${T('note_body_ph')}"></textarea></div>
+        <div><div class="lbl">${S.lang==='bn'?'ক্যাটাগরি':'Category'}</div>
+        <select class="inp" id="si-ncat"><option value="personal">${T('personal')}</option><option value="work">${T('work')}</option><option value="ideas">${S.lang==='bn'?'আইডিয়া':'Ideas'}</option></select></div>
+        <button class="btn-full" onclick="addNote(document.getElementById('si-ntitle').value,document.getElementById('si-nbody').value,document.getElementById('si-ncat').value)">${T('save_btn')}</button>
+      </div>`,
+    money: `<div class="sheet-handle"></div><h2>${T('sheet_money')}</h2>
+      <div class="frow">
+        <div><div class="lbl">${S.lang==='bn'?'বিবরণ':'Description'}</div><input class="inp" id="si-mdesc" placeholder="${T('money_ph')}"></div>
+        <div><div class="lbl">${S.lang==='bn'?'পরিমাণ':'Amount'}</div><input class="inp" type="number" id="si-mamt" placeholder="${T('amount_ph')}"></div>
+        <div class="f2">
+          <div><div class="lbl">${S.lang==='bn'?'ধরন':'Type'}</div>
+          <select class="inp" id="si-mtype"><option value="income">${T('income_opt')}</option><option value="expense">${T('expense_opt')}</option></select></div>
+          <div><div class="lbl">${S.lang==='bn'?'ক্যাটাগরি':'Category'}</div>
+          <select class="inp" id="si-mcat"><option value="food">${S.lang==='bn'?'খাবার':'Food'}</option><option value="rent">${S.lang==='bn'?'বাড়িভাড়া':'Rent'}</option><option value="salary">${S.lang==='bn'?'বেতন':'Salary'}</option><option value="other">${S.lang==='bn'?'অন্যান্য':'Other'}</option></select></div>
+        </div>
+        <button class="btn-full" onclick="addMoney(document.getElementById('si-mdesc').value,document.getElementById('si-mamt').value,document.getElementById('si-mtype').value,document.getElementById('si-mcat').value)">${T('add_btn')}</button>
+      </div>`,
+    shared: `<div class="sheet-handle"></div><h2>Add to Shared Room</h2>
+      <div class="frow">
+        <div><div class="lbl">Task / Item</div><input class="inp" id="si-sh" placeholder="e.g. Buy groceries, Call doctor..."></div>
+        <div><div class="lbl">Priority</div>
+        <select class="inp" id="si-shpri"><option value="urgent">🔴 Urgent</option><option value="normal" selected>🟢 Normal</option></select></div>
+        <button class="btn-full" onclick="addSharedFirebase(document.getElementById('si-sh').value,document.getElementById('si-shpri').value,'')">Add to Room →</button>
+      </div>`,
+    contact: `<div class="sheet-handle"></div><h2>Add Contact</h2>
+      <p style="font-size:13px;color:var(--text2);margin:-8px 0 16px;">Save someone's room code so you can quickly send them tasks</p>
+      <div class="frow">
+        <div><div class="lbl">Contact Name</div><input class="inp" id="si-cname" placeholder="e.g. Wife, Boss, Abu..."></div>
+        <div>
+          <div class="lbl">Their Room Code</div>
+          <input class="inp" id="si-croomid" placeholder="e.g. AB12CD" style="text-transform:uppercase;letter-spacing:2px;font-size:16px;font-weight:700;text-align:center;">
+          <div style="font-size:11px;color:var(--text3);margin-top:6px;">Ask them to open Shared Space and share their Room Code with you</div>
+        </div>
+        <button class="btn-full" onclick="addContact(document.getElementById('si-cname').value,document.getElementById('si-croomid').value)">Save Contact →</button>
+      </div>`,
+  };
+  if (sheets[type]) { content.innerHTML = sheets[type]; _showOverlay(); }
+}
+function _showOverlay() {
+  document.getElementById('sheet-overlay').classList.add('on');
+  history.pushState({ sheet: true }, '');
+}
+function closeSheet(e) {
+  if (e && e.target !== document.getElementById('sheet-overlay')) return;
+  const overlay = document.getElementById('sheet-overlay');
+  if (!overlay.classList.contains('on')) return;
+  if (history.state && history.state.sheet) {
+    history.back(); // triggers popstate, which removes the 'on' class
+  } else {
+    overlay.classList.remove('on');
+  }
+}
+
+// ===== TOAST =====
+function showToast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('on'); setTimeout(() => t.classList.remove('on'), 2500); }
+
+
+function renderAISendExamples() {
+  const el = document.getElementById('ai-send-examples');
+  if (!el) return;
+  const examples = S.lang === 'bn' ? [
+    '"স্ত্রীকে বাজারের লিস্ট পাঠাও: দুধ, ডিম, চিনি"',
+    '"বসকে জানাও মিটিং কাল হবে"',
+    '"আবুকে পাঠাও: ওষুধ কিনতে হবে"',
+  ] : [
+    '"Send wife: milk, eggs, sugar from market"',
+    '"Tell boss: meeting postponed to tomorrow"',
+    '"Send Abu: need to buy medicine"',
+  ];
+  el.innerHTML = examples.map(e => `
+    <div onclick="setExamplePrompt(${JSON.stringify(e)})" style="padding:8px 12px;background:#fff8f7;border:1px solid #fde8e8;border-radius:8px;font-size:12px;color:var(--text2);cursor:pointer;transition:all .2s;"
+      onmouseover="this.style.borderColor='var(--red)';this.style.color='var(--red)'"
+      onmouseout="this.style.borderColor='#fde8e8';this.style.color='var(--text2)'"
+    >${e}</div>`).join('');
+}
+
+function setExamplePrompt(text) {
+  showPage('ai');
+  setTimeout(() => {
+    const inp = document.getElementById('chat-inp');
+    if (inp) { inp.value = text.replace(/"/g, ''); inp.focus(); }
+  }, 300);
+}
+
+// ===== INIT =====
+// Fix mobile browser address-bar viewport height bug:
+// sets --app-h to the ACTUAL visible height so the bottom nav never
+// gets pushed off-screen on Chrome/Safari mobile.
+function setAppHeight() {
+  document.documentElement.style.setProperty('--app-h', window.innerHeight + 'px');
+}
+
+function init() {
+  setAppHeight();
+  window.addEventListener('resize', setAppHeight);
+  window.addEventListener('orientationchange', () => setTimeout(setAppHeight, 100));
+  setLang(S.lang);
+  updatePomoDisp();
+  const d = new Date().getHours();
+  const date_el = document.getElementById('lbl-good-time');
+  if (date_el) date_el.textContent = getGreeting();
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const ml = document.getElementById('money-month-label');
+  if (ml) { const n = new Date(); ml.textContent = monthNames[n.getMonth()] + ' ' + n.getFullYear(); }
+  initFirebase();
+  updateTopbarAvatar();
+  updateRoomUI();
+  renderActivity();
+  showPage('home');
+  setTimeout(updateRoomUI, 500);
+  renderContacts();
+  renderAISendExamples();
+}
+
+// ===== FIREBASE =====
+const FB_CONFIG = {
+  apiKey: "AIzaSyDykht7HLl6Ii_H-6OU7ST8IV9-Z6GAjRw",
+  authDomain: "zindagiai.firebaseapp.com",
+  databaseURL: "https://zindagiai-default-rtdb.firebaseio.com",
+  projectId: "zindagiai",
+  storageBucket: "zindagiai.firebasestorage.app",
+  messagingSenderId: "446432565389",
+  appId: "1:446432565389:web:aa70bb237b48b36058aac4"
+};
+let db = null, fbInited = false, currentRoomId = localStorage.getItem('z_room')||null;
+
+// One-shot SDK loader — no retry, no recursion, no loop
+function initFirebase() {
+  if (fbInited) return;
+  // Already in page (e.g. GitHub Pages)
+  if (typeof firebase !== 'undefined') { _fbConnect(); return; }
+  // Try dynamic load once
+  let loaded = 0;
+  const urls = [
+    'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
+    'https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js'
+  ];
+  urls.forEach(url => {
+    const s = document.createElement('script');
+    s.src = url;
+    s.onload  = () => { if (++loaded === 2) _fbConnect(); };
+    s.onerror = () => { /* CDN blocked - silent offline */ };
+    document.head.appendChild(s);
+  });
+}
+
+function _fbConnect() {
+  if (fbInited) return;
+  try {
+    if (!firebase.apps.length) firebase.initializeApp(FB_CONFIG);
+    db = firebase.database();
+    fbInited = true;
+    // Auto-ensure my room exists so my code is always valid
+    db.ref('rooms/'+MY_ROOM_ID+'/createdAt').once('value').then(s=>{
+      if (!s.exists()) db.ref('rooms/'+MY_ROOM_ID).set({createdAt:Date.now(),owner:MY_ROOM_CODE,items:{}});
+    });
+    updateRoomUI();
+    if (currentRoomId) _listenRoom(currentRoomId);
+  } catch(e) { /* silent */ }
+}
+
+// ===== ROOM SYSTEM =====
+function createRoom() {
+  if (!db) { showToast('Firebase offline'); return; }
+  const id = 'ROOM_' + Math.random().toString(36).substr(2,8).toUpperCase();
+  db.ref('rooms/'+id).set({createdAt:Date.now(),items:{}}).then(()=>{
+    currentRoomId = id; localStorage.setItem('z_room',id);
+    _listenRoom(id); _showCode(id); showToast('Room created!');
+  }).catch(e=>showToast('Error: '+e.message));
+}
+
+function joinRoom(rid) {
+  if (!rid) return;
+  rid = rid.trim().toUpperCase();
+  if (!rid.startsWith('ROOM_')) rid = 'ROOM_'+rid;
+  if (!db) { showToast('Firebase offline'); return; }
+  db.ref('rooms/'+rid).once('value').then(s=>{
+    if (s.exists()) {
+      currentRoomId = rid; localStorage.setItem('z_room',rid);
+      _listenRoom(rid); closeSheet();
+      showToast(S.lang==='bn'?'রুমে যোগ হয়েছেন!':'Joined!');
+    } else showToast(S.lang==='bn'?'রুম নেই!':'Room not found!');
+  }).catch(e=>showToast('Error: '+e.message));
+}
+
+function joinRoomSilent(rid) { if (db&&rid) _listenRoom(rid); }
+
+function _listenRoom(rid) {
+  if (!db) return;
+  db.ref('rooms/'+rid+'/items').on('value', snap=>{
+    S.shared = snap.val() ? Object.values(snap.val()) : [];
+    save('shared',S.shared); renderShared(); updateRoomUI();
+  });
+}
+
+function addSharedFirebase(text,pri,from) {
+  const item={id:Date.now(),text:text.trim(),pri:pri||'normal',from:from||'Me',done:false,date:new Date().toLocaleDateString()};
+  if (db&&currentRoomId) {
+    db.ref('rooms/'+currentRoomId+'/items/'+item.id).set(item)
+      .then(()=>{closeSheet();showToast(S.lang==='bn'?'যোগ হয়েছে!':'Added!');})
+      .catch(()=>addShared(text,pri,from));
+  } else addShared(text,pri,from);
+}
+
+function toggleSharedFirebase(id) {
+  const s=S.shared.find(x=>x.id===id); if(!s) return;
+  if(db&&currentRoomId) db.ref('rooms/'+currentRoomId+'/items/'+id+'/done').set(!s.done);
+  else toggleShared(id);
+}
+
+// ===== MY ROOM CODE (persistent, unique per device) =====
+let MY_ROOM_CODE = localStorage.getItem('z_my_room_code');
+if (!MY_ROOM_CODE) {
+  MY_ROOM_CODE = Math.random().toString(36).substr(2,6).toUpperCase();
+  localStorage.setItem('z_my_room_code', MY_ROOM_CODE);
+}
+const MY_ROOM_ID = 'ROOM_' + MY_ROOM_CODE;
+
+function copyMyCode() {
+  const code = currentRoomId ? currentRoomId.replace('ROOM_','') : MY_ROOM_CODE;
+  navigator.clipboard?.writeText(code).then(()=>showToast('✅ Code copied: ' + code)).catch(()=>showToast('Your code: ' + code));
+}
+function shareMyCode() {
+  const code = currentRoomId ? currentRoomId.replace('ROOM_','') : MY_ROOM_CODE;
+  if (navigator.share) {
+    navigator.share({ title:'Join my ZindagiAI room', text:'Use code '+code+' to join my Shared Space in ZindagiAI app.' });
+  } else {
+    copyMyCode();
+  }
+}
+
+function updateRoomUI() {
+  // Update the "your room code" display
+  const myCodeEl = document.getElementById('my-room-code-disp');
+  if (myCodeEl) myCodeEl.textContent = MY_ROOM_CODE;
+
+  const noRoom = document.getElementById('shared-no-room');
+  const inRoom = document.getElementById('shared-in-room');
+  if (!noRoom || !inRoom) return;
+
+  if (currentRoomId && db) {
+    noRoom.style.display = 'none';
+    inRoom.style.display = 'block';
+    const code = currentRoomId.replace('ROOM_','');
+    const el = document.getElementById('connected-room-code');
+    if (el) el.textContent = 'Room: ' + code;
+    renderShared();
+  } else {
+    noRoom.style.display = 'block';
+    inRoom.style.display = 'none';
+  }
+}
+
+// ===== ACTIVITY FEED =====
+let activityLog = JSON.parse(localStorage.getItem('z_activity') || '[]');
+function logActivity(action, desc) {
+  const nick = PROF.nick || (PROF.name ? PROF.name.split(' ')[0] : 'You');
+  activityLog.unshift({ who: nick, action, desc, ts: Date.now() });
+  if (activityLog.length > 20) activityLog = activityLog.slice(0,20);
+  localStorage.setItem('z_activity', JSON.stringify(activityLog));
+  renderActivity();
+}
+function renderActivity() {
+  const el = document.getElementById('activity-list'); if (!el) return;
+  if (!activityLog.length) { el.innerHTML = '<div style="text-align:center;padding:16px;color:var(--text3);font-size:13px;">No activity yet</div>'; return; }
+  const colors = ['#E8341C','#3B82F6','#22C55E','#F59E0B','#8B5CF6'];
+  el.innerHTML = activityLog.slice(0,5).map((a,i) => {
+    const ago = _timeAgo(a.ts);
+    const init = (a.who||'?')[0].toUpperCase();
+    const col = colors[i%5];
+    return `<div class="activity-item">
+      <div class="act-avatar" style="background:${col};">${init}</div>
+      <div class="act-body"><div class="act-name">${a.who} ${a.action}</div><div class="act-desc">${a.desc}</div></div>
+      <div class="act-time">${ago}</div>
+    </div>`;
+  }).join('');
+}
+function _timeAgo(ts) {
+  const s = Math.floor((Date.now()-ts)/1000);
+  if (s<60) return s+'s ago'; if (s<3600) return Math.floor(s/60)+'m ago';
+  if (s<86400) return Math.floor(s/3600)+'h ago'; return Math.floor(s/86400)+'d ago';
+}
+
+// ===== ROOM SYSTEM =====
+function createRoom() {
+  if (!db) { showToast('Connecting... try again in a second'); return; }
+  db.ref('rooms/'+MY_ROOM_ID).set({createdAt:Date.now(), owner: MY_ROOM_CODE, items:{}}).then(()=>{
+    currentRoomId = MY_ROOM_ID; localStorage.setItem('z_room', MY_ROOM_ID);
+    _listenRoom(MY_ROOM_ID); updateRoomUI();
+    showToast('✅ Room ready! Share code: ' + MY_ROOM_CODE);
+  }).catch(e=>showToast('Error: '+e.message));
+}
+
+function joinRoom(rid) {
+  if (!rid) { showToast('Enter a room code'); return; }
+  rid = rid.trim().toUpperCase();
+  if (!rid.startsWith('ROOM_')) rid = 'ROOM_'+rid;
+  if (!db) { showToast('Connecting... try again'); return; }
+  db.ref('rooms/'+rid).once('value').then(s=>{
+    if (s.exists()) {
+      if (currentRoomId && currentRoomId !== rid) {
+        db.ref('rooms/'+currentRoomId+'/items').off();
+      }
+      currentRoomId = rid; localStorage.setItem('z_room',rid);
+      _listenRoom(rid); updateRoomUI();
+      showToast('✅ Joined room: ' + rid.replace('ROOM_',''));
+    } else showToast('❌ Room not found. Check the code.');
+  }).catch(e=>showToast('Error: '+e.message));
+}
+
+function joinRoomSilent(rid) { if (db&&rid) _listenRoom(rid); }
+
+function _listenRoom(rid) {
+  if (!db) return;
+  db.ref('rooms/'+rid+'/items').on('value', snap=>{
+    S.shared = snap.val() ? Object.values(snap.val()) : [];
+    save('shared',S.shared); renderShared(); updateRoomUI();
+  });
+}
+
+function addSharedFirebase(text,pri,from) {
+  if (!text.trim()) { showToast('Write a task first!'); return; }
+  const nick = from || PROF.nick || (PROF.name ? PROF.name.split(' ')[0] : 'Me');
+  const item={id:Date.now(),text:text.trim(),pri:pri||'normal',from:nick,done:false,date:new Date().toLocaleDateString()};
+  logActivity('added task', text.trim());
+  if (db&&currentRoomId) {
+    db.ref('rooms/'+currentRoomId+'/items/'+item.id).set(item)
+      .then(()=>{closeSheet();showToast('✅ Task added!');})
+      .catch(()=>addShared(text,pri,nick));
+  } else addShared(text,pri,nick);
+}
+
+function toggleSharedFirebase(id) {
+  const s=S.shared.find(x=>x.id===id); if(!s) return;
+  const newDone = !s.done;
+  logActivity(newDone?'completed':'unchecked', s.text);
+  if(db&&currentRoomId) db.ref('rooms/'+currentRoomId+'/items/'+id+'/done').set(newDone);
+  else toggleShared(id);
+}
+
+function deleteSharedFirebase(id) {
+  const s=S.shared.find(x=>x.id===id); if(!s) return;
+  if(db&&currentRoomId) db.ref('rooms/'+currentRoomId+'/items/'+id).remove().then(()=>showToast('Deleted'));
+  else { S.shared=S.shared.filter(x=>x.id!==id); save('shared',S.shared); renderShared(); }
+}
+
+function leaveRoom() {
+  if(currentRoomId&&db) db.ref('rooms/'+currentRoomId+'/items').off();
+  currentRoomId=null; localStorage.removeItem('z_room');
+  S.shared=[]; save('shared',S.shared); updateRoomUI();
+  showToast('Left room');
+}
+
+// ===== CONTACTS =====
+let contacts=JSON.parse(localStorage.getItem('z_contacts')||'[]');
+function saveContacts(){localStorage.setItem('z_contacts',JSON.stringify(contacts));}
+
+function addContact(name,roomCode){
+  if(!name.trim()||!roomCode.trim()){showToast('Enter name & room code');return;}
+  const colors=['#E8341C','#3B82F6','#22C55E','#F59E0B','#8B5CF6'];
+  contacts.push({id:Date.now(),name:name.trim(),roomId:roomCode.trim().toUpperCase(),avatar:name.trim()[0].toUpperCase(),color:colors[contacts.length%5]});
+  saveContacts();renderContacts();closeSheet();showToast('✅ '+name+' added!');
+}
+function removeContact(id){
+  if (!confirm('Remove this contact?')) return;
+  contacts=contacts.filter(c=>c.id!==id);saveContacts();renderContacts();
+}
+
+function renderContacts(){
+  const el=document.getElementById('contacts-list');if(!el)return;
+  if(!contacts.length){
+    el.innerHTML=`<div style="text-align:center;padding:16px 0 8px;">
+      <div style="font-size:28px;margin-bottom:8px;">👤</div>
+      <div style="font-size:13px;color:var(--text3);">No contacts yet</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px;">Add a contact to quickly send them tasks</div>
+    </div>`;
+    return;
+  }
+  el.innerHTML=contacts.map(c=>`
+    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border2);">
+      <div style="width:42px;height:42px;border-radius:50%;background:${c.color};display:flex;align-items:center;justify-content:center;font-size:17px;font-weight:700;color:#fff;flex-shrink:0;">${c.avatar}</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:600;color:var(--text);">${c.name}</div>
+        <div style="font-size:11px;color:var(--text2);margin-top:1px;">Room code: <b style="letter-spacing:1px;">${c.roomId}</b></div>
+      </div>
+      <div style="display:flex;gap:6px;">
+        <button onclick="sendToContact(${c.id})" style="padding:7px 13px;background:var(--redbg);color:var(--red);border:1.5px solid #fca5a5;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Send</button>
+        <button onclick="joinRoom('${c.roomId}')" style="padding:7px 13px;background:var(--bg);color:var(--text);border:1.5px solid var(--border);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">Visit</button>
+        <button onclick="removeContact(${c.id})" style="padding:7px 10px;background:var(--border2);border:none;border-radius:8px;font-size:12px;cursor:pointer;">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+function sendToContact(cid){
+  const c=contacts.find(x=>x.id===cid);if(!c)return;
+  const sc=document.getElementById('sheet-content');
+  sc.innerHTML=`<div class="sheet-handle"></div>
+    <h2>Send to ${c.name}</h2>
+    <p style="font-size:13px;color:var(--text2);margin:-8px 0 16px;">Items will be added to <b>${c.name}</b>'s shared room (${c.roomId})</p>
+    <div class="frow">
+      <div>
+        <div class="lbl">What to send? (one per line or comma-separated)</div>
+        <textarea class="inp" id="si-send-msg" placeholder="e.g.\nmilk\neggs, bread\nbuy medicine" style="min-height:110px;"></textarea>
+      </div>
+      <div>
+        <div class="lbl">Priority</div>
+        <select class="inp" id="si-send-pri">
+          <option value="urgent">🔴 Urgent</option>
+          <option value="normal" selected>🟢 Normal</option>
+        </select>
+      </div>
+      <button class="btn-full" onclick="sendItemsToContact(${cid})">
+        Send to ${c.name} →
+      </button>
+    </div>`;
+  _showOverlay();
+}
+
+function sendItemsToContact(cid){
+  const c=contacts.find(x=>x.id===cid);if(!c)return;
+  const msg=document.getElementById('si-send-msg')?.value.trim();
+  const pri=document.getElementById('si-send-pri')?.value||'normal';
+  if(!msg){showToast('Write something first!');return;}
+  if(!db){showToast('Firebase offline');return;}
+  const rid='ROOM_'+c.roomId;
+  const nick = PROF.nick || (PROF.name ? PROF.name.split(' ')[0] : 'Someone');
+  let count = 0;
+  msg.split(/[,\n]+/).map(i=>i.trim()).filter(Boolean).forEach(item=>{
+    const id=Date.now()+Math.random();
+    db.ref('rooms/'+rid+'/items/'+id).set({id,text:item,pri,from:nick,done:false,date:new Date().toLocaleDateString()});
+    count++;
+  });
+  closeSheet();showToast('✅ Sent '+count+' item(s) to '+c.name+'!');
+}
+
+function renderAISendExamples(){} // kept for compatibility
+
+document.addEventListener('DOMContentLoaded', init);
+
+</script>
+</body>
+</html>
